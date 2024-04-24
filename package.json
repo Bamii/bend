@@ -1,0 +1,11 @@
+{
+  "name": "bend",
+  "version": "1.0.0",
+  "description": "no-code backend engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "bami david",
+  "license": "ISC"
+}
