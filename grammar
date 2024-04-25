@@ -1,0 +1,19 @@
+
+expr -> type id '{' ids '}'
+expr -> endpoint verb route id '{' preludes ids '}'
+
+preludes -> pre_inputs
+
+pre_inputs -> pre_inputs pre_input | #
+
+pre_input -> input input_type id
+
+input_type -> body | query
+
+route -> // regex for route, with queries using :
+
+verb -> get | post | patch | delete
+
+ids -> ids id | #
+
+id -> ...

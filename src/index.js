@@ -1,1 +1,1 @@
-//
+// parse the init file.
