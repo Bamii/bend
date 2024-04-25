@@ -1,0 +1,23 @@
+EntityBlock(ModelBlock)
+    identifier
+    fields[]
+        value
+
+EndpointBlock
+    type get | post ...
+    identifier
+    route
+    inputs[]
+    body[]
+
+// interpretes to class with CRUD capatabilities  
+TypeBlock
+    identifier
+    body[]
+
+CronBlock
+    body[]
+
+MiddlewareBlock
+    body[]
+

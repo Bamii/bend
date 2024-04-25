@@ -1,8 +1,23 @@
 
 expr -> type id '{' ids '}'
-expr -> endpoint verb route id '{' preludes ids '}'
+
+expr -> endpoint verb route '{' preludes ids body '}'
+
+expr -> model id '{' model_fields '}'
+
+model_fields -> model_fields model_field | #
+
+model_field -> id model_type
+
+model_type -> string | int | boolean | float
 
 preludes -> pre_inputs
+
+body -> body '{' stmts '}'
+
+stmts -> stmts stmt | #
+
+stmt -> ...
 
 pre_inputs -> pre_inputs pre_input | #
 
