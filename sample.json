@@ -42,6 +42,47 @@
                         }
                     }
                 ]
+            },
+            {
+                "type": "Module",
+                "path": "/something",
+                "middlewares": [
+                    { "type": "MiddlewareFunction", "value": "auth_middleware" }
+                ],
+                "endpoints": [
+                    {
+                        "type": "Endpoint",
+                        "path": "/something",
+                        "inputs": [
+                            {
+                                "type": "HeaderInput",
+                                "key": "token",
+                                "value": {
+                                    "type": "string",
+                                    "value": "nadihnoacj"
+                                }
+                            },
+                            {
+                                "type": "BodyInput",
+                                "key": "token",
+                                "value": {
+                                    "type": "object",
+                                    "value": { "me": "nadihnoacj" }
+                                }
+                            }
+                        ],
+                        "middlewares": [
+                            {
+                                "type": "MiddlewareFunction",
+                                "value": "auth_middleware"
+                            }
+                        ],
+                        "body": {
+                            "type": "MiddlewareFunction",
+                            "value": "something_service"
+                        }
+                    }
+                ]
             }
         ],
         "cron": [

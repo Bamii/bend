@@ -4,14 +4,14 @@ const BEND_AST = [
         modules: [
             {
                 type: "Module",
-                path: "/something",
+                path: "admin",
                 middlewares: [
                     { type: "MiddlewareFunction", value: "auth_middleware" },
                 ],
                 endpoints: [
                     {
                         type: "Endpoint",
-                        path: "/something",
+                        path: "something",
                         inputs: [
                             {
                                 type: "HeaderInput",
@@ -43,6 +43,47 @@ const BEND_AST = [
                     },
                 ],
             },
+            {
+                "type": "Module",
+                "path": "user",
+                "middlewares": [
+                    { "type": "MiddlewareFunction", "value": "auth_middleware" }
+                ],
+                "endpoints": [
+                    {
+                        "type": "Endpoint",
+                        "path": "something",
+                        "inputs": [
+                            {
+                                "type": "HeaderInput",
+                                "key": "token",
+                                "value": {
+                                    "type": "string",
+                                    "value": "nadihnoacj"
+                                }
+                            },
+                            {
+                                "type": "BodyInput",
+                                "key": "token",
+                                "value": {
+                                    "type": "object",
+                                    "value": { "me": "nadihnoacj" }
+                                }
+                            }
+                        ],
+                        "middlewares": [
+                            {
+                                "type": "MiddlewareFunction",
+                                "value": "auth_middleware"
+                            }
+                        ],
+                        "body": {
+                            "type": "MiddlewareFunction",
+                            "value": "something_service"
+                        }
+                    }
+                ]
+            }
         ],
         cron: [
             {
@@ -128,18 +169,15 @@ function setupBend(state, { ast, functions }) {
     const endpoints = new Map();
     const modules = new Map();
 
+    // get modules.
     walk(ast, {
-        pre: (ast) => {
-            // console.log("entered", ast.type);
-        },
-        post: (ast) => {
-            // console.log("left", ast.type);
-        },
         prenode: {
             "Module": (ast) => {
-                console.log(ast);
+                modules.set(ast.path, new Module(ast));
+                console.log(ast)
+                return true
             },
-            "Module": (ast) => {
+            "MiddlewareFunction": (ast) => {
                 console.log(ast)
             }
         },
@@ -172,34 +210,38 @@ function setupModels(state, models) {}
 
 function walk(ast, actions) {
     const { pre, post, prenode, postnode } = actions;
+    let res;
     switch (ast.type) {
         case "Program": {
-            pre(ast);
-            prenode?.["Program"]?.(ast);
+            pre?.(ast);
+            res = prenode?.["Program"]?.(ast);
+            if(res) return
             for (let _module of ast.modules) {
                 walk(_module, actions);
             }
             postnode?.["Program"]?.(ast);
-            post(ast);
+            post?.(ast);
             break;
         }
 
         case "Module": {
-            pre(ast);
-            prenode?.["Module"]?.(ast);
+            pre?.(ast);
+            res = prenode?.["Module"]?.(ast);
+            if(res) return
             for (let middleware of ast.middlewares) {
                 walk(middleware, actions);
             }
             for (let endpoint of ast.endpoints) {
                 walk(endpoint, actions);
             }
-            post(ast);
+            post?.(ast);
             postnode?.["Module"]?.(ast);
             break;
         }
         case "Endpoint": {
-            pre(ast);
-            prenode?.["Endpoint"]?.(ast);
+            pre?.(ast);
+            res = prenode?.["Endpoint"]?.(ast);
+            if(res) return
             for (let input of ast.inputs) {
                 walk(input, actions);
             }
@@ -207,55 +249,61 @@ function walk(ast, actions) {
                 walk(middleware, actions);
             }
             walk(ast.body, actions);
-            post(ast);
+            post?.(ast);
             postnode?.["Endpoint"]?.(ast);
             break;
         }
 
         case "MiddlewareFunction": {
-            pre(ast);
-            prenode?.["MiddlewareFunction"]?.(ast);
-            post(ast);
+            pre?.(ast);
+            res = prenode?.["MiddlewareFunction"]?.(ast);
+            if(res) return
+            post?.(ast);
             postnode?.["MiddlewareFunction"]?.(ast);
             break;
         }
 
         case "Function": {
-            pre(ast);
-            prenode?.["Function"]?.(ast);
-            post(ast);
+            pre?.(ast);
+            res = prenode?.["Function"]?.(ast);
+            if(res) return
+            post?.(ast);
             postnode?.["Function"]?.(ast);
             break;
         }
 
         case "HeaderInput": {
-            pre(ast);
-            prenode?.["HeaderInput"]?.(ast);
-            post(ast);
+            pre?.(ast);
+            res = prenode?.["HeaderInput"]?.(ast);
+            if(res) return
+            post?.(ast);
             postnode?.["HeaderInput"]?.(ast);
             break;
         }
 
         case "BodyInput": {
-            pre(ast);
-            prenode?.["BodyInput"]?.(ast);
-            post(ast);
+            pre?.(ast);
+            res = prenode?.["BodyInput"]?.(ast);
+            if(res) return
+            post?.(ast);
             postnode?.["BodyInput"]?.(ast);
             break;
         }
         case "CronJob": {
-            pre(ast);
-            prenode?.["CronJob"]?.(ast);
+            pre?.(ast);
+            res = prenode?.["CronJob"]?.(ast);
+            if(res) return
             walk(ast.body, actions);
-            post(ast);
+            post?.(ast);
             postnode?.["CronJob"]?.(ast);
             break;
         }
 
         case "Entity": {
-            pre(ast);
-            prenode?.["Entity"]?.(ast);
-            post(ast);
+            pre?.(ast);
+            res = prenode?.["Entity"]?.(ast);
+            if(res) return
+            post?.(ast);
             postnode?.["Entity"]?.(ast);
             break;
         }
