@@ -58,4 +58,8 @@ export class Coordinator {
     get_block(id) {
         return this.#blocks.get(id);
     }
+
+    make_block(type, params) {
+        
+    }
 }
