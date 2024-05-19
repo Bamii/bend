@@ -21,7 +21,9 @@
     "@remix-run/react": "^2.9.1",
     "@remix-run/serve": "^2.9.1",
     "escodegen": "^2.1.0",
+    "fs-extra": "^11.2.0",
     "isbot": "^4.1.0",
+    "koa": "^2.15.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

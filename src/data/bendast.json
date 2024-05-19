@@ -1,0 +1,133 @@
+{
+    "type": "Program",
+    "modules": [
+        {
+            "type": "Module",
+            "name": "cats",
+            "path": "/cats",
+            "middlewares": [
+                { "type": "MiddlewareFunction", "value": "mw__auth__authmiddleware" }
+            ],
+            "endpoints": [
+                {
+                    "type": "Endpoint",
+                    "path": "/something",
+                    "method": "get",
+                    "inputs": [
+                        {
+                            "type": "HeaderInput",
+                            "key": "token",
+                            "value": {
+                                "type": "string",
+                                "value": "nadihnoacj"
+                            }
+                        },
+                        {
+                            "type": "BodyInput",
+                            "key": "token",
+                            "value": {
+                                "type": "object",
+                                "value": { "me": "nadihnoacj" }
+                            }
+                        }
+                    ],
+                    "middlewares": [
+                        {
+                            "type": "MiddlewareFunction",
+                            "value": "mw__auth__authmiddleware"
+                        }
+                    ],
+                    "body": {
+                        "type": "ControllerMiddlewareFunction",
+                        "value": "ctrl__dog__get__getsingledog"
+                    }
+                },
+                {
+                    "type": "Endpoint",
+                    "path": "/something",
+                    "method": "post",
+                    "inputs": [
+                        {
+                            "type": "HeaderInput",
+                            "key": "token",
+                            "value": {
+                                "type": "string",
+                                "value": "nadihnoacj"
+                            }
+                        },
+                        {
+                            "type": "BodyInput",
+                            "key": "token",
+                            "value": {
+                                "type": "object",
+                                "value": { "me": "nadihnoacj" }
+                            }
+                        }
+                    ],
+                    "middlewares": [
+                        {
+                            "type": "MiddlewareFunction",
+                            "value": "mw__auth__authmiddleware"
+                        }
+                    ],
+                    "body": {
+                        "type": "ControllerMiddlewareFunction",
+                        "value": "ctrl__dog__get__getsingledog"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Module",
+            "name": "dogs",
+            "path": "/dogs",
+            "middlewares": [
+                { "type": "MiddlewareFunction", "value": "mw__auth__authmiddleware" }
+            ],
+            "endpoints": [
+                {
+                    "type": "Endpoint",
+                    "path": "/something",
+                    "method": "get",
+                    "inputs": [
+                        {
+                            "type": "HeaderInput",
+                            "key": "token",
+                            "value": {
+                                "type": "string",
+                                "value": "nadihnoacj"
+                            }
+                        },
+                        {
+                            "type": "BodyInput",
+                            "key": "token",
+                            "value": {
+                                "type": "object",
+                                "value": { "me": "nadihnoacj" }
+                            }
+                        }
+                    ],
+                    "middlewares": [
+                        {
+                            "type": "MiddlewareFunction",
+                            "value": "mw__auth__authmiddleware"
+                        }
+                    ],
+                    "body": {
+                        "type": "ControllerMiddlewareFunction",
+                        "value": "ctrl__cat__get__getsinglecat"
+                    }
+                }
+            ]
+        }
+    ],
+    "cron": [
+        {
+            "type": "CronJob",
+            "time": "* * * * * *",
+            "name": "unique_id",
+            "body": { "type": "Function", "name": "fn__utils__getrandomNumber" },
+            "arguments": []
+        }
+    ]
+}

@@ -12,6 +12,7 @@
                     {
                         "type": "Endpoint",
                         "path": "/something",
+                        "method": "get",
                         "inputs": [
                             {
                                 "type": "HeaderInput",
@@ -53,6 +54,7 @@
                     {
                         "type": "Endpoint",
                         "path": "/something",
+                        "method": "get",
                         "inputs": [
                             {
                                 "type": "HeaderInput",

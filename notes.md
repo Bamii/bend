@@ -3,7 +3,7 @@ bend is an open source nocode backend builder, the design is supposed to have th
     x - shareable server config 
     - should (transpile) down to javascript. (will use expressjs as a server, zod for validations, )
     
-- trying to figure out the grammar of the dsl. check [grammar](./grammar)
+i'm trying to figure out the grammar of the dsl. check [grammar](./grammar)
 
 ## 25th april 2024
 - i intend on learning about parsing and lexing a dsl, and i should be ready to complete the grammar by tomorrow (26th april 2024)
@@ -21,7 +21,7 @@ bend is an open source nocode backend builder, the design is supposed to have th
 
 # -------------------------------------------------------
 hmmm so i thought about why i'm even using a dsl or why a dsl is the best hammer for the job. 
-mostly because i can just construct an ast directly. (which is in the intermediary between a dsl and a target language anyway.)
+mostly because i can just construct an ast directly. (which is the intermediary between a dsl and a target language anyway.)
 
 # --------
 ast > dsl
@@ -50,7 +50,7 @@ since we'll be dealing mostly in function scope.
 
 ## 3rd may 2024
 its been a while, i have been caught up in work and stuff, 
-so, basically they're going to be lego blocks. and there will be blocks of different shapes and sizes... these blocks will all be thrown in a pool. so that we can request for an instance of a block anytime we need it.
+on the UI end of things, basically they're going to be lego blocks. and there will be blocks of different shapes and sizes... these blocks will all be thrown in a pool. so that we can request for an instance of a block anytime we need it.
 basically,
     - create block
         - request for block 
@@ -70,8 +70,8 @@ so, basically...
     - create endpoint, with inputs and types...
         - representation
             - type: endpoint
-            - path: string with ":"
-            - method: get/post/patch/delete
+            - path: nb: string with ":"
+            - method: get/post/patch/delete...
             - inputs: (types: header, body)
             - middlewares: middleware[]
             - body: function
@@ -98,7 +98,7 @@ i have created a [sample file](/sample.json) that contains a list of the compone
     - ... some config files.
 
 here will be the user flow. 
-- init
+- init dev
     1. if there is a gen folder, continue to 2, if not continue to 7.
     2. scan the gen folder, and look for every ".service.js" file in gen/modules. parse those files and extract their respective middleware function names. ~ add some meta tags that depict if that function was auto-generated or user defined (this is mostly because i dont want to touch functions manually updated by the user) ~
     3. store the middlewares in map(middlewares)
@@ -133,6 +133,29 @@ here will be the user flow.
         1. generate the ast template for the cron definition statement from [cron](https://www.npmjs.com/package/cron)
         2. append the template to the main.js ast.
 
-- dev
-    1. generate the functions and store the function names and its respective types(middleware, regular function) in a map 
     
+## 15th may 2024
+its implementation time, i've started writing the code to use the configuration to build a working backend. i want to get the core right before refactoring and sorting things like auth.
+
+## 16th may 2024
+implementation continues.. i pretty muuch work into the next day a lot of times. right now i'm trying to implement the `generate_server` 'build step' i defined earlier (12th may).
+i figure its not sufficient to just store the general functions as `utils/functions.js` because of possible third party functions. i decided to let everything be 'plugins', a plugin is essentially a reuseable module. 
+it MUST contain a `package.json` that will have all the dependencies it uses. it MUST also contain a `functions.mjs` that will contain an export of all the functions that this plugin provides. all the exports in the folder MUST also have jsdoc comments that will give us details about the argument and return value.
+as part of the project configuration, there will also be a `functions.json` that will contain all the meta about all the functions used in the program, this meta will include an imports field, this field will be used to populate the import statements.
+at "generate time" the related imported plugins will be copied into the plugins folder of the generated project. and it will be imported from the plugins folder by any file that uses it.
+doing it this way ensures that there is a uniform and predictable way of parsing and finding functions, and its easier to add new functionality to the generated project at little cost.
+this would mean that here's the minimal files to get started with `bend`
+- functions.js
+- functions.json
+- bendast.json
+- models.json
+
+i also added a distinction between MiddlewareFunction and a ControllerMiddlewareFunction this is to know where to put the function `on generate` (either in the service file or the middlewares file)
+
+it works right now, i've successfully generated a folder with the correct linkings and all. i do need a correct aliasing method because i'm relying on it to import the plugins and the middleware, mostly because figuring out relative positioning is a lot of stress. or at least i dont want to use it.
+this will probably lead me to using vite as a runner. i do also still need to generate the package.json :(
+
+## 17th may 2024
+ive been flirting with the idea of using dependency injection inside the plugins to avoid explicitly passing implementations. i.e: instead of requiring files and stuff, the plugins can register (with a unique id) with the dependency controller and then any plugin that requires another one can just request for a container using its id.
+this is based on the assumption that plugins will want to call other plugins.
+so what will this look like?

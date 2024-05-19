@@ -1,208 +1,60 @@
-const BEND_AST = [
-    {
-        type: "Program",
-        modules: [
-            {
-                type: "Module",
-                path: "admin",
-                middlewares: [
-                    { type: "MiddlewareFunction", value: "auth_middleware" },
-                ],
-                endpoints: [
-                    {
-                        type: "Endpoint",
-                        path: "something",
-                        inputs: [
-                            {
-                                type: "HeaderInput",
-                                key: "token",
-                                value: {
-                                    type: "string",
-                                    value: "nadihnoacj",
-                                },
-                            },
-                            {
-                                type: "BodyInput",
-                                key: "token",
-                                value: {
-                                    type: "object",
-                                    value: { me: "nadihnoacj" },
-                                },
-                            },
-                        ],
-                        middlewares: [
-                            {
-                                type: "MiddlewareFunction",
-                                value: "auth_middleware",
-                            },
-                        ],
-                        body: {
-                            type: "MiddlewareFunction",
-                            value: "something_service",
-                        },
-                    },
-                ],
-            },
-            {
-                "type": "Module",
-                "path": "user",
-                "middlewares": [
-                    { "type": "MiddlewareFunction", "value": "auth_middleware" }
-                ],
-                "endpoints": [
-                    {
-                        "type": "Endpoint",
-                        "path": "something",
-                        "inputs": [
-                            {
-                                "type": "HeaderInput",
-                                "key": "token",
-                                "value": {
-                                    "type": "string",
-                                    "value": "nadihnoacj"
-                                }
-                            },
-                            {
-                                "type": "BodyInput",
-                                "key": "token",
-                                "value": {
-                                    "type": "object",
-                                    "value": { "me": "nadihnoacj" }
-                                }
-                            }
-                        ],
-                        "middlewares": [
-                            {
-                                "type": "MiddlewareFunction",
-                                "value": "auth_middleware"
-                            }
-                        ],
-                        "body": {
-                            "type": "MiddlewareFunction",
-                            "value": "something_service"
-                        }
-                    }
-                ]
-            }
-        ],
-        cron: [
-            {
-                type: "CronJob",
-                time: "* * * * * *",
-                name: "unique_id",
-                body: { type: "Function", name: "dothisnow" },
-                arguments: [],
-            },
-        ],
-    },
-];
+// import bun from "bun"
+import fs from "node:fs/promises";
+import babel from "@babel/parser";
+import types from "@babel/types";
+import * as generator from "@babel/generator";
+import { isIdentifier } from "@babel/types";
+import { isFunctionDeclaration } from "@babel/types";
 
-document.addEventListener("DOMContentLoaded", function () {
-    bend();
-});
 
-function createStore() {
-    const request = indexedDB.open("bend", 3);
+const OUTPUT = "BEND";
 
-    request.onupgradeneeded = (event) => {
-        const db = event.target.result;
+const FUNCTIONS = new Map();
+const BEND_AST = [];
 
-        // Create another object store called "names" with the autoIncrement flag set as true.
-        const objStore = db.createObjectStore("objects");
+bend();
 
-        // Because the "names" object store has the key generator, the key for the name value is generated automatically.
-        // The added records would be like:
-        // key : 1 => value : "Bill"
-        // key : 2 => value : "Donna"
-        customerData.forEach((customer) => {
-            objStore.add(customer.name);
-        });
-    };
-}
+async function bend() {
+    await __bootstrap__();
 
-function save(filename, object) {}
-
-function bend() {
     const state = {};
-    const MODELS = [{ type: "model", name: "Cats", fields: [] }];
-    const FUNCTIONS = [
-        {
-            module: "",
-            type: "controller",
-            name: "ctrl__module__get__namething",
-            arguments: [],
-        },
-        {
-            module: "",
-            type: "controller",
-            name: "ctrl__module__post__anothername",
-            arguments: [],
-        },
-        {
-            module: "",
-            type: "controller",
-            name: "ctrl__module__get__fnname",
-            arguments: [],
-        },
-        {
-            module: "",
-            type: "middleware",
-            name: "mdlw__module__middlewarename",
-            arguments: [],
-        },
-        {
-            module: "",
-            type: "function",
-            name: "func__utils__fnname",
-            arguments: [],
-        },
+    const MODELS = [
+        { type: "model", name: "Dogs", fields: [] },
+        { type: "model", name: "Cats", fields: [] },
     ];
+    const FUNCTIONS = new Map();
 
+    console.log(BEND_AST)
+    // debugger
     const [bendast] = BEND_AST;
     setupModels(state, MODELS);
     setupBend(state, { ast: bendast, functions: FUNCTIONS });
 }
 
-function setupBend(state, { ast, functions }) {
+async function setupBend(state, { ast, functions }) {
     // const fns_state = state.functions;
-    const fns_state = new Map();
+    // const fns_state = new Map();
     const endpoints = new Map();
     const modules = new Map();
-
+    console.log(functions);
+    console.log(ast)
     // get modules.
     walk(ast, {
         prenode: {
-            "Module": (ast) => {
-                modules.set(ast.path, new Module(ast));
-                console.log(ast)
-                return true
+            Module: (ast) => {
+                modules.set(ast.path, ast);
+                // modules.set(ast.path, new Module(ast));
+                console.log(ast);
+                return true;
             },
-            "MiddlewareFunction": (ast) => {
-                console.log(ast)
-            }
+            MiddlewareFunction: (ast) => {
+                console.log(ast);
+            },
         },
     });
-}
 
-class Module {
-    #path;
-    #middlewares;
-    #endpoints;
-
-    constructor({ path, middlewares, endpoints }) {
-        this.#endpoints = endpoints;
-        this.#path = path;
-        this.#middlewares = middlewares;
-    }
-}
-
-class Endpoint {
-    #path;
-    #inputs;
-
-    constructor({ path, inputs }) {
-        this.#path = path;
-        this.#inputs = inputs;
+    for (let [module_name, ast] of modules.entries()) {
+        await setupModule(module_name, ast);
     }
 }
 
@@ -215,7 +67,7 @@ function walk(ast, actions) {
         case "Program": {
             pre?.(ast);
             res = prenode?.["Program"]?.(ast);
-            if(res) return
+            if (res) return;
             for (let _module of ast.modules) {
                 walk(_module, actions);
             }
@@ -227,7 +79,7 @@ function walk(ast, actions) {
         case "Module": {
             pre?.(ast);
             res = prenode?.["Module"]?.(ast);
-            if(res) return
+            if (res) return;
             for (let middleware of ast.middlewares) {
                 walk(middleware, actions);
             }
@@ -241,7 +93,7 @@ function walk(ast, actions) {
         case "Endpoint": {
             pre?.(ast);
             res = prenode?.["Endpoint"]?.(ast);
-            if(res) return
+            if (res) return;
             for (let input of ast.inputs) {
                 walk(input, actions);
             }
@@ -257,7 +109,7 @@ function walk(ast, actions) {
         case "MiddlewareFunction": {
             pre?.(ast);
             res = prenode?.["MiddlewareFunction"]?.(ast);
-            if(res) return
+            if (res) return;
             post?.(ast);
             postnode?.["MiddlewareFunction"]?.(ast);
             break;
@@ -266,7 +118,7 @@ function walk(ast, actions) {
         case "Function": {
             pre?.(ast);
             res = prenode?.["Function"]?.(ast);
-            if(res) return
+            if (res) return;
             post?.(ast);
             postnode?.["Function"]?.(ast);
             break;
@@ -275,7 +127,7 @@ function walk(ast, actions) {
         case "HeaderInput": {
             pre?.(ast);
             res = prenode?.["HeaderInput"]?.(ast);
-            if(res) return
+            if (res) return;
             post?.(ast);
             postnode?.["HeaderInput"]?.(ast);
             break;
@@ -284,7 +136,7 @@ function walk(ast, actions) {
         case "BodyInput": {
             pre?.(ast);
             res = prenode?.["BodyInput"]?.(ast);
-            if(res) return
+            if (res) return;
             post?.(ast);
             postnode?.["BodyInput"]?.(ast);
             break;
@@ -292,7 +144,7 @@ function walk(ast, actions) {
         case "CronJob": {
             pre?.(ast);
             res = prenode?.["CronJob"]?.(ast);
-            if(res) return
+            if (res) return;
             walk(ast.body, actions);
             post?.(ast);
             postnode?.["CronJob"]?.(ast);
@@ -302,7 +154,7 @@ function walk(ast, actions) {
         case "Entity": {
             pre?.(ast);
             res = prenode?.["Entity"]?.(ast);
-            if(res) return
+            if (res) return;
             post?.(ast);
             postnode?.["Entity"]?.(ast);
             break;
@@ -311,4 +163,103 @@ function walk(ast, actions) {
         default:
             break;
     }
+}
+
+async function __bootstrap__() {
+    try {
+        // make sure output folder is created.
+        // debugger
+        await ensureFolder(OUTPUT);
+        // const FUNCTIONS = [];
+        const bend_ast = await fs.readFile("./src/data/bendast.json")
+        BEND_AST.push(JSON.parse(bend_ast.toString()))
+        const functions = await fs.readFile("./src/data/functions.js");
+        const functions_ast = babel.parse(functions.toString());
+        // console.log(ast.program.body)
+    
+        for (let fn of functions_ast.program.body) {
+            if (isFunctionDeclaration(fn)) {
+                const fnname = fn.id.name;
+                let [type, module, _] = fnname.split("__");
+    
+                switch (type) {
+                    case "mw":
+                    case "ctrl":
+                        type = "MiddlewareFunction";
+                        break;
+    
+                    case "fn":
+                        type = "Function";
+                    default:
+                        break;
+                }
+    
+                FUNCTIONS.set(fn.id.name, {
+                    name: fn.id.name,
+                    type,
+                    module,
+                    ast: fn,
+                });
+            }
+        }
+    
+        // console.log(FUNCTIONS)
+        
+    } catch (error) {
+        // debugger
+    }
+}
+
+async function setupModule(modulename, ast) {
+    // const modulename = module.name;
+    const isroot = modulename == "app" || modulename == "name";
+    const import_statements = [];
+    const export_statements = [];
+    const body_statements = [];
+
+    if (!isroot) {
+        await ensureFolder(`${OUTPUT}/modules/${modulename}`);
+        const router_statement = babel.parse(`
+            const router = new HapiRouter({
+                path: "${modulename}"
+            });
+        `);
+
+        body_statements.push(router_statement.program.body[0]);
+    }
+
+    const used_middlewares = new Set();
+    walk(ast, {
+        prenode: {
+            Endpoint: (ast) => {
+                const endpoint_statement = babel.parse(`
+                    router.use('${ast.path}', ${ast.body.value});
+                `);
+
+                used_middlewares.add(ast.body.value);
+                body_statements.push(endpoint_statement.program.body[0]);
+                // console.log(ast);
+                return true;
+            },
+        },
+    });
+
+    const statements = [
+        ...import_statements,
+        ...body_statements,
+        ...export_statements,
+    ];
+
+    console.log(generator.default(types.program(statements)));
+    console.log(used_middlewares);
+    // sort the service file,
+
+    // sort the controller file,
+    //
+}
+
+async function ensureFolder(path) {
+    try {
+        await fs.mkdir(OUTPUT);
+    } catch (error) {}
 }

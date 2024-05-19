@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = "env(DATABASE_URL)"
+}
+
+model Dog {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  cat_id String
+  cat    Cat?   @relation(fields: [cat_id], references: [id])
+}
+
+model Cat {
+  id  String @id @default(auto()) @map("_id") @db.ObjectId
+  Dog Dog[]
+}
+
+enum Animal {
+  Dog
+  Cat
+}
+
+type Octopus {
+  legs  String
+  brain String?
+}

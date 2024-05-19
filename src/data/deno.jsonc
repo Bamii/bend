@@ -1,0 +1,8 @@
+{
+    "imports": {
+      "~plugins/": "./plugins/",
+      "~middlewares/": "./middlewares/",
+      "~modules": "./modules/"
+    }
+  }
+  

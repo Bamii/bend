@@ -1,0 +1,44 @@
+[
+    {
+        "name": "mongo",
+        "types": [
+            "enum",
+            "type",
+            "String",
+            "Boolean",
+            "Int",
+            "BigInt",
+            "Float",
+            "Decimal",
+            "DateTime",
+            "Json",
+            "Bytes",
+            "Unsupported"
+        ],
+        "attributes": [
+            "@db",
+            "@id",
+            "@@id",
+            "@default",
+            "@unique",
+            "@@unique",
+            "@@index",
+            "@relation",
+            "@map",
+            "@@map",
+            "@updatedAt",
+            "@ignore",
+            "@@ignore",
+            "@@schema"
+        ],
+        "attribute_fns": [
+            "auto()",
+            "autoincrement()",
+            "sequence()",
+            "cuid()",
+            "uuid()",
+            "now()",
+            "dbgenerated()"
+        ]
+    }
+]

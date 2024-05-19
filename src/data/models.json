@@ -1,0 +1,103 @@
+{
+    "source": "mongo",
+    "generator": {
+        "provider": "prisma-client-js"
+    },
+    "datasource": {
+        "name": "db",
+        "provider": "mongodb",
+        "url": {
+            "type": "env",
+            "value": "DATABASE_URL"
+        }
+    },
+    "entities": [
+        {
+            "type": "model",
+            "name": "Dog",
+            "auth": true,
+            "fields": [
+                {
+                    "type": "String",
+                    "title": "id",
+                    "modifiers": [
+                        { "modifier": "@id", "arguments": null },
+                        {
+                            "modifier": "@default",
+                            "arguments": ["auto()"]
+                        },
+                        {
+                            "modifier": "@map",
+                            "arguments": ["\"_id\""]
+                        },
+                        { "modifier": "@db.ObjectId", "arguments": null }
+                    ]
+                },
+                {
+                    "type": "String",
+                    "title": "cat_id"
+                },
+                {
+                    "type": "Relation",
+                    "model": "Cat",
+                    "optional": true,
+                    "title": "cat",
+                    "modifiers": [
+                            {
+                                "modifier": "@relation",
+                                "arguments": [
+                                    "fields: [cat_id]",
+                                    "references: [id]"
+                                ]
+                            }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "model",
+            "name": "Cat",
+            "fields": [
+                {
+                    "type": "String",
+                    "title": "id",
+                    "modifiers": [
+                        { "modifier": "@id", "arguments": null },
+                        {
+                            "modifier": "@default",
+                            "arguments": ["auto()"]
+                        },
+                        {
+                            "modifier": "@map",
+                            "arguments": ["\"_id\""]
+                        },
+                        { "modifier": "@db.ObjectId", "arguments": null }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "enum",
+            "name": "Animal",
+            "enums": [
+                "Dog",
+                "Cat"
+            ]
+        },
+        {
+            "type": "type",
+            "name": "Octopus",
+            "fields": [
+                {
+                    "type": "String",
+                    "title": "legs"
+                },
+                {
+                    "type": "String",
+                    "optional": true,
+                    "title": "brain"
+                }
+            ]
+        }
+    ]
+}

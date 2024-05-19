@@ -1,0 +1,34 @@
+{
+    "fn__utils__getrandomNumber": {
+        "type": "Function",
+        "name": "fn__utils__getrandomNumber",
+        "module": "bend__utils",
+        "imports": [
+            { "type": "module", "module": "maths" }
+        ],
+        "arguments": []
+    },
+    "ctrl__dog__get__getsingledog": {
+        "type": "MiddlewareFunction",
+        "name": "ctrl__dog__get__getsingledog",
+        "imports": [],
+        "arguments": []
+    },
+    "ctrl__cat__get__getsinglecat": {
+        "type": "MiddlewareFunction",
+        "name": "ctrl__cat__get__getsinglecat",
+        "imports": [
+            { "type": "module", "module": "maths" },
+            { "type": "module", "module": "models" }
+        ],
+        "arguments": []
+    },
+    "mw__auth__authmiddleware": {
+        "type": "MiddlewareFunction",
+        "name": "mw__auth__authmiddleware",
+        "imports": [
+            { "type": "module", "module": "utils" }
+        ],
+        "arguments": []
+    }
+}
