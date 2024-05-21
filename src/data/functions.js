@@ -1,6 +1,11 @@
-async function mw__auth__authmiddleware(context) {
+async function mw_auth_authmiddleware2() {
+    return localScheme.authenticate()
+}
+
+async function mw__auth__authmiddleware(context, next) {
     // const number = utils.add(2, 4)
     console.log(context.req)
+    await next()
 }
 
 async function fn__utils__getrandomNumber() {
@@ -9,7 +14,7 @@ async function fn__utils__getrandomNumber() {
 
 async function ctrl__cat__get__getsinglecat(context) {
     const rand = maths.random(10)
-    const dog = models.create("dogs", { data: {}, options: {} })
+    const dog = await models.default.create("dog", { data: {}, options: {} })
 
     return {
         "name": "siamese fucking cat",

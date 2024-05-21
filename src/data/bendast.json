@@ -1,10 +1,20 @@
 {
     "type": "Program",
+    "authentication_schemes": [
+        {
+            "type": "AuthenticationScheme",
+            "name": "local",
+            "module": "auth"
+        }
+    ],
+    "authentication": ["local"],
+    "middlewares": [],
     "modules": [
         {
             "type": "Module",
             "name": "cats",
             "path": "/cats",
+            "authentication": [],
             "middlewares": [
                 { "type": "MiddlewareFunction", "value": "mw__auth__authmiddleware" }
             ],
@@ -32,10 +42,7 @@
                         }
                     ],
                     "middlewares": [
-                        {
-                            "type": "MiddlewareFunction",
-                            "value": "mw__auth__authmiddleware"
-                        }
+
                     ],
                     "body": {
                         "type": "ControllerMiddlewareFunction",
@@ -65,10 +72,7 @@
                         }
                     ],
                     "middlewares": [
-                        {
-                            "type": "MiddlewareFunction",
-                            "value": "mw__auth__authmiddleware"
-                        }
+
                     ],
                     "body": {
                         "type": "ControllerMiddlewareFunction",
@@ -80,9 +84,10 @@
         {
             "type": "Module",
             "name": "dogs",
+            "authentication": [],
             "path": "/dogs",
             "middlewares": [
-                { "type": "MiddlewareFunction", "value": "mw__auth__authmiddleware" }
+                { "type": "MiddlewareFunction", "value": "mw_auth_authmiddleware2" }
             ],
             "endpoints": [
                 {
@@ -110,7 +115,7 @@
                     "middlewares": [
                         {
                             "type": "MiddlewareFunction",
-                            "value": "mw__auth__authmiddleware"
+                            "value": "mw_auth_authmiddleware2"
                         }
                     ],
                     "body": {

@@ -19,11 +19,13 @@ i'm trying to figure out the grammar of the dsl. check [grammar](./grammar)
     - a CRON should have a duration, and a body (which will be a function)
     - a MIDDLEWARE should have a body which is a function 
 
-# -------------------------------------------------------
+-------------------------------------------------------
+
 hmmm so i thought about why i'm even using a dsl or why a dsl is the best hammer for the job. 
 mostly because i can just construct an ast directly. (which is the intermediary between a dsl and a target language anyway.)
 
-# --------
+--------
+
 ast > dsl
 pros / cons
 direct codegen / larger init files.
@@ -33,7 +35,9 @@ dsl > ast
 pros / cons
 smaller files / longer startup & dev time
 easy reading /  
+
 --------
+
 decisions decisions... im checking out how it'll look if i use an ast directly instead. check [ast](./ast)
 
 ## 26th april 2024
@@ -159,3 +163,43 @@ this will probably lead me to using vite as a runner. i do also still need to ge
 ive been flirting with the idea of using dependency injection inside the plugins to avoid explicitly passing implementations. i.e: instead of requiring files and stuff, the plugins can register (with a unique id) with the dependency controller and then any plugin that requires another one can just request for a container using its id.
 this is based on the assumption that plugins will want to call other plugins.
 so what will this look like?
+
+## 18th may 2024
+worked on generating the database entites and CRUD functions using prisma. by now you should know that the pre-representation will be a json file.
+after successfully generating the schema file and the database migration, everything is now complete and all thats left if to run a server using sample configuration. this didnt come without its challenges.. although i already predicted this ahead of time. 
+
+the major challenge i had was absolute vs relative imports. like i said earlier it MIGHT not be easy to figure out relative imports (tbh im not just interested), so i opted to see how it was done in the wild... 
+sticking with nodejs would mean i might have to introduce typescript (which i'm not thinking of until this version is stable.), and some other hoops i was not ready to jump through. 
+[bun](bun.sh) was my other thought, on further research it seemed that i would also need to introduce typescript somehow... (idk, i saw something about a tsconfig and i closed the page.)
+i turned to [deno](deno.com) and ALAS I FOUND WHAT I WAS LOOKING FOR, NO HOOPS REQUIRED. and apparently i dont even have to specify the dependency tree in a package.json, (a HUGE WIN for me given that i still had a task in the back burner... populating the dependencies field in package.json)
+
+i chose deno and life hasn't been easier!!!
+i run the server and YAYYYYY! IT FUCKING WORKED.
+
+now to the UI part... LET'S FUCKING GO.
+bami out.
+
+## 21st may 2024
+spent the last couple of days trying to debug an issue where prisma kept rejecting my DATABASE_URL it was so annoying that i almost pull my hair out... i fucking tried to hardcode the string in the schema but it didnt change anything.
+i figured it was a deno thing, given that i HAVE TO run `prisma generate` with the `--no-engine` flag... this option apparently works only with prisma accelerate but i didnt see that fineprint until later on.
+this meant that any server generated that will have a datasource MUST also go through prisma accelerate.. this is not ideal for user experience, sooo i started thinking of ways to not use this.
+i went back to my first love... bun. and i tried to fix the relative path thing and it was as simple as adding a `tsconfig.json` lool. idk why i thought this would be stressful, anyway with that out of the way, i went on to try generating a client using the schema... and voila it worked!!! beautifully.
+sooo safe to say that we will be going the bun way.
+i actually was starting to like deno.. till next time amigos.
+
+------------------
+
+i've gotten everything to work well now, and while i wanted to add the authentication... i tried to make it work with making it just another middleware... but there were some issues especially given the fact that stratefy names are not always the same as the module name.
+i decided to have a top level `authentication_schemes` that will contain all the authentication schemes that will be used in the project.
+and then a per-module and per-endpoint `authentication` array that contains a list of authentication scheme names.
+
+it works like butter. smooth, baby!
+
+-----
+
+passport doesnt interface well with koajs... the only adapter i found was last updated last year. it looks like i'll be going back to use hapi. why?
+- built-in auth support,
+- simple controllers.
+- builtin routing
+- builtin input validation (with joi)... (although i prefer zod)
+

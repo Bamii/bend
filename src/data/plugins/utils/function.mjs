@@ -37,3 +37,7 @@ export const multiply = (c, y) => x * y;
  * 
  */
 export const divide = (c, y) => x / y;
+
+export default {
+    add, subtract, multiply, divide
+}

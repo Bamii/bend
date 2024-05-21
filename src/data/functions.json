@@ -8,6 +8,14 @@
         ],
         "arguments": []
     },
+    "mw_auth_authmiddleware2": {
+        "type": "MiddlewareFunction",
+        "name": "mw_auth_authmiddleware2",
+        "imports": [
+            { "type": "auth_scheme", "module": "auth", "scheme": "local" }
+        ],
+        "arguments": []
+    },
     "ctrl__dog__get__getsingledog": {
         "type": "MiddlewareFunction",
         "name": "ctrl__dog__get__getsingledog",

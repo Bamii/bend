@@ -46,3 +46,7 @@ export const multiply = (c, y) => x * y;
  * 
  */
 export const divide = (c, y) => x / y;
+
+export default {
+    random, add, subtract, divide, multiply
+}

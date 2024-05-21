@@ -1,0 +1,10 @@
+{
+   "include": [],
+   "exclude": [],
+    "compilerOptions": {
+      "paths": {
+        "~/plugins/*": ["./plugins/*"],
+        "~/middlewares": ["./middlewares/index.mjs"],
+      }
+    }
+  }

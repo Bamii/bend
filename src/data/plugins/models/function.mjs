@@ -1,9 +1,5 @@
 import { PrismaClient } from "@prisma/client"
 
-export function create() {
-    
-}
-
 class Model {
     #client;
 
@@ -24,4 +20,5 @@ let instance;
 export default (function() {
     if(!instance)
         instance = new Model();
+    return instance;
 })()

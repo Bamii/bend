@@ -39,3 +39,7 @@ export const entries = (object, cb) => {
         cb(prop)
     }
 }
+
+export default {
+    keys, properties, entries
+}
