@@ -1,5 +1,5 @@
 {
-  "name": "auth",
+  "name": "jwt-auth",
   "version": "1.0.0",
   "description": "",
   "main": "function.js",
@@ -7,8 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "passport-local": "latest",
-    "passport": "latest"
+    "@hapi/jwt": "latest"
   },
   "keywords": ["auth"],
   "author": "",

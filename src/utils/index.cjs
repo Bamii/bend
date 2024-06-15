@@ -1,3 +1,5 @@
+const fs = require("node:fs/promises")
+
 exports.walk = function walk(ast, actions) {
     const { pre, post, prenode, postnode } = actions;
     let res;
@@ -110,4 +112,10 @@ exports.walk = function walk(ast, actions) {
         default:
             break;
     }
+}
+
+exports.ensureFolder = async function (path) {
+  try {
+    await fs.mkdir(path, { recursive: true });
+  } catch (error) { }
 }

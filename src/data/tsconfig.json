@@ -5,6 +5,7 @@
       "paths": {
         "~/plugins/*": ["./plugins/*"],
         "~/middlewares": ["./middlewares/index.mjs"],
+        "~/app": ["./app.mjs"],
       }
     }
   }

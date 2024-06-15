@@ -1,0 +1,1 @@
+exports.Framework = class Framework {}

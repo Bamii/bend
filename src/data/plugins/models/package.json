@@ -6,11 +6,12 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-    "passport-local": "latest",
-    "passport": "latest"
-  },
   "keywords": ["auth"],
+  "dependencies": {
+    "@hapi/jwt": "latest",
+    "@prisma/client": "5.14.0",
+    "prisma": "latest"
+  },
   "author": "",
   "license": "ISC"
 }

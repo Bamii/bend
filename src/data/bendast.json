@@ -3,26 +3,39 @@
     "authentication_schemes": [
         {
             "type": "AuthenticationScheme",
-            "name": "local",
-            "module": "auth"
+            "name": "jwt",
+            "module": "jwt-auth",
+            "validator": "home"
         }
     ],
-    "authentication": ["local"],
+    "cache_schemes": {},
+    "authentication": null,
     "middlewares": [],
     "modules": [
         {
             "type": "Module",
             "name": "cats",
             "path": "/cats",
-            "authentication": [],
+            "authentication": [{
+                "name": "jwt",
+                "mode": "required"
+            }],
             "middlewares": [
-                { "type": "MiddlewareFunction", "value": "mw__auth__authmiddleware" }
+                {
+                    "type": "MiddlewareFunction",
+                    "value": "mw__auth__authmiddleware"
+                }
             ],
             "endpoints": [
                 {
                     "type": "Endpoint",
                     "path": "/something",
                     "method": "get",
+                    "cors": false,
+                    "authentication": [{
+                        "name": "jwt",
+                        "mode": "required"
+                    }],
                     "inputs": [
                         {
                             "type": "HeaderInput",
@@ -41,9 +54,7 @@
                             }
                         }
                     ],
-                    "middlewares": [
-
-                    ],
+                    "middlewares": [],
                     "body": {
                         "type": "ControllerMiddlewareFunction",
                         "value": "ctrl__dog__get__getsingledog"
@@ -53,6 +64,17 @@
                     "type": "Endpoint",
                     "path": "/something",
                     "method": "post",
+                    "description": "",
+                    "cors": {
+                        "origin": [],
+                        "maxAge": "",
+                        "headers": [],
+                        "additionalHeaders": [],
+                        "exposedHeaders": [],
+                        "additionalExposedHeaders": [],
+                        "credentials": true,
+                        "preflightStatusCode": "200"
+                    },
                     "inputs": [
                         {
                             "type": "HeaderInput",
@@ -71,9 +93,8 @@
                             }
                         }
                     ],
-                    "middlewares": [
-
-                    ],
+                    "authentication": [],
+                    "middlewares": [],
                     "body": {
                         "type": "ControllerMiddlewareFunction",
                         "value": "ctrl__dog__get__getsingledog"
@@ -87,13 +108,26 @@
             "authentication": [],
             "path": "/dogs",
             "middlewares": [
-                { "type": "MiddlewareFunction", "value": "mw_auth_authmiddleware2" }
+                {
+                    "type": "MiddlewareFunction",
+                    "value": "mw_auth_authmiddleware2"
+                }
             ],
             "endpoints": [
                 {
                     "type": "Endpoint",
                     "path": "/something",
+                    "authentication": [],
                     "method": "get",
+                    "payload": {},
+                    "cache": {
+                        "privacy": "",
+                        "expiresIn": "",
+                        "statuses": ["200"],
+                        "otherwise": ""
+                    },
+                    "description": "",
+                    "cors": false,
                     "inputs": [
                         {
                             "type": "HeaderInput",
@@ -131,7 +165,10 @@
             "type": "CronJob",
             "time": "* * * * * *",
             "name": "unique_id",
-            "body": { "type": "Function", "name": "fn__utils__getrandomNumber" },
+            "body": {
+                "type": "Function",
+                "name": "fn__utils__getrandomNumber"
+            },
             "arguments": []
         }
     ]

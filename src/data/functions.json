@@ -38,5 +38,14 @@
             { "type": "module", "module": "utils" }
         ],
         "arguments": []
+    },
+    "home": {
+        "type": "MiddlewareFunction",
+        "cache": {
+
+        },
+        "name": "mw__auth__authmiddleware",
+        "imports": [],
+        "arguments": []       
     }
 }

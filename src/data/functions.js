@@ -3,7 +3,7 @@ async function mw_auth_authmiddleware2() {
 }
 
 async function mw__auth__authmiddleware(context, next) {
-    // const number = utils.add(2, 4)
+    const number = utils.add(2, 4)
     console.log(context.req)
     await next()
 }
@@ -34,4 +34,8 @@ async function ctrl__dog__post__createdog(context) {
         "status": "created",
         "message": "created dog"
     };
+}
+
+async function home() {
+    console.log("dsfadsf")
 }
