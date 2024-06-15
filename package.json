@@ -5,9 +5,11 @@
     "main": "index.js",
     "type": "module",
     "scripts": {
+      "start": "echo asdf",
       "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "bami david",
+    "banner": true,
     "license": "ISC",
     "dependencies": {
       "@babel/generator": "^7.24.4",

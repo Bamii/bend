@@ -1,0 +1,22 @@
+mixin endpoint-input(cls="", id="")
+  - let unique = Date.now()
+  div(id=id  data-endpoint-input-target=unique class="w-full border border-black p-3 rounded "+cls)
+      div(class="flex flex-col mt-0")
+          //- label(for="url") Input Type
+          select(
+              class="border-gray-300 border-2 p-2 rounded"
+              name="method"
+              id=""
+          )
+              //- option(value="") --- Type ---
+              option(value="body") Body
+              option(value="query") Query
+              option(value="header") Header
+      
+      div(class="mt-3")
+          div(class="") Schema
+          div(class="flex gap-[8px] mt-2 flex-wrap schema-field-list")
+              +schema-field()
+              +schema-field()
+              button(id="add_schema" data-endpoint-input-actor=unique type="button" class="w-max border-2 border-dashed rounded p-3") + add new schema item
+

@@ -197,9 +197,37 @@ it works like butter. smooth, baby!
 
 -----
 
-passport doesnt interface well with koajs... the only adapter i found was last updated last year. it looks like i'll be going back to use hapi. why?
+passport doesnt interface well with koajs... the only adapter i found was last updated last year. it looks like i'll be going back to use [hapi](hapi.dev). why?
 - built-in auth support,
 - simple controllers.
 - builtin routing
 - builtin input validation (with joi)... (although i prefer zod)
 
+## 22nd may 2024
+after so much research, and deliberations i still havent been able to decide, here are the alternatives and their pros and cons.
+- koajs
+    - pros
+        - simple middleware and routing... although i can argue that its the same with express, and the rest.
+        - 
+    - cons
+        - no proper authentication library exists.
+
+- hapi
+    - pros
+        - simple middleware and routing.
+        - every route config is self contained. in that, all 'middlewares' will be defined right on the route instead of stacking `router.use()` calls.
+        - builtin auth schemes.
+        - builtin validation
+    - cons
+        - since the route config is self contained, it can get quite verbose and quite confusing.
+
+- expressjs
+    - pros
+        - i have worked extensively with this, plus its probably the most popular framework which means secure authentication libraries, and alot of other libraries already exist. 
+    - cons
+        ...
+
+- fastify
+    - pros
+        - looks like it works like expressjs.
+        - 
