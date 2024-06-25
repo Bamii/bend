@@ -1,6 +1,6 @@
 import * as Jwt from '@hapi/jwt';
 
-export const register = async (server, { name, validator }) => {
+export const register = async (server, { name, validator, options: {} }) => {
   await server.register(Jwt)
 
   await server.auth.strategy(name, "jwt", {

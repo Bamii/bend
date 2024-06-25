@@ -8,9 +8,9 @@
         ],
         "arguments": []
     },
-    "mw_auth_authmiddleware2": {
+    "mw__auth__authmiddleware2": {
         "type": "MiddlewareFunction",
-        "name": "mw_auth_authmiddleware2",
+        "name": "mw__auth__authmiddleware2",
         "imports": [
             { "type": "auth_scheme", "module": "auth", "scheme": "local" }
         ],

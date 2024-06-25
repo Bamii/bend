@@ -231,3 +231,11 @@ after so much research, and deliberations i still havent been able to decide, he
     - pros
         - looks like it works like expressjs.
         - 
+
+## 16th june 2024
+hmm its been a while. quite a while. anyway, what's left to do is...
+- configure authentication
+- add types for everything typeable... 
+- make sure that the function body contains only one function block.
+- import all the core plugins and the core middlewares into the UI.
+-  

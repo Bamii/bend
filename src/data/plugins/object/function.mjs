@@ -40,6 +40,14 @@ export const entries = (object, cb) => {
     }
 }
 
+/**
+ * loop object properties.
+ *
+ * @param {object} - object to loop
+ * @param {cb} - function to call on each element
+ * @return {void} 
+ * 
+ */
 export default {
     keys, properties, entries
 }

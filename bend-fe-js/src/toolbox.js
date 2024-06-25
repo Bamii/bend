@@ -12,6 +12,18 @@ your toolbox from scratch, or carefully choosing whether you need each block
 listed here.
 */
 
+export const bend_toolbox = [{
+  kind: 'bendToolbox',
+  contents: [
+    { type: 'label', value: "Middlewares"},
+    {
+      type: 'input_value',
+      name: 'TEXT',
+      check: 'String',
+    },
+  ]
+}]
+
 export const toolbox = {
   kind: 'categoryToolbox',
   contents: [
@@ -505,6 +517,10 @@ export const toolbox = {
             },
           },
         },
+        {
+          kind: 'block',
+          type: 'jhghjmember',
+        },
       ],
     },
     {
@@ -625,5 +641,19 @@ export const toolbox = {
       categorystyle: 'procedure_category',
       custom: 'PROCEDURE',
     },
+    {
+      kind: 'category',
+      name: 'Middlewares',
+      categorystyle: 'middleware_category',
+      custom: 'PROCEDURE',
+    },
+    {
+      kind: 'sep',
+    },
+     {
+      kind: 'category',
+      name: "My Functions",
+      custom: "MY_PROCEDURES"
+    }
   ],
 };

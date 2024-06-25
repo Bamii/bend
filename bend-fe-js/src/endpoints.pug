@@ -14,125 +14,19 @@ html(lang="en")
         title Endpoints
     body(class="flex")
         div(class="w-[70vw] mx-auto" id="app")
-            div(class="h-" x-data="{ count: 0 }")
+            div(class="h- flex flex-col gap-[4px]" x-data="{ count: 0 }")
                 h3(class="py-5 text-3xl font-semibold mb-3") Endpointssd
 
-                button(popovertarget="pop") open modal
-                div(
-                    popover="manual"
-                    id="pop"
-                    class="bkdrp fixed h-[100%] right-0 _w-full bg-white _max-w-screen-sm w-[70vw] p-[24px] rounded-[10px] border overflow"
-                )
-                    button(popovertarget="pop" class="mb-5")
-                        | close modal
+                div(class="flex flex-col gap-[4px]")
+                    <authentication-controller></authentication-controller>
 
-                    form(id="endpoint-form" class="gap-[6px] grid grid-cols-3")
-                        div(class="col-span-3 flex flex-col _bg-black")
-                            div(class="grid grid-cols-[100px_1fr] gap-[4px]")
-                                div(class="justify-between flex flex-col mt-3")
-                                    //- label(for="url") Method
-                                    select(
-                                        class="border-gray-300 border-2 p-2 rounded mt-1"
-                                        name="method"
-                                        id=""
-                                    )
-                                        option(value="GET") GET
-                                        option(value="POST") POST
+                    <create-function></create-function>
 
-                                div(class="justify-between flex flex-col mt-3")
-                                    div(class="grid grid-cols-[auto_1fr]")
-                                        div(class="rounded-l pl-3 border-2 border-r-0 _bg-gray-100 mt-1 flex items-center justify-center") /something/
-                                        input(
-                                            class="border-gray-300 border-2 border-l-0 p-2 pl-0 rounded-r mt-1"
-                                            type="text"
-                                            name="url"
-                                            autocomplete="endpoint_url"
-                                            id="url"
-                                        )
+                    <create-function type="middleware"></create-function>
 
-                            div(class="border _border-dashed border-black rounded p-2 mt-10")
-                                div(class="flex flex-col")
-                                    div(class="mb-1 flex justify-between items-center gap-[2px]") Authentication Scheme
-                                    div(class="flex gap-[4px]")
-                                        div(class="flex flex-col-reverse")
-                                            input(type="radio", id="jwt_auth_scheme" name="auth_scheme" class="peer appearance-none rounded-full border-black ")
-                                            label(for="jwt_auth_scheme" class="peer-checked:text-white peer-checked:bg-black py-1 px-5 text-sm rounded-full border-black border border-2 border-dashed ") JWT 
-                                        div(class="flex flex-col-reverse")
-                                            input(type="radio", id="google_auth_scheme" name="auth_scheme" class="peer appearance-none rounded-full border-black ")
-                                            label(for="google_auth_scheme" class="peer-checked:text-white peer-checked:bg-black py-1 px-5 text-sm rounded-full border-black border border-2 border-dashed ") Google
-                                        div(class="flex flex-col-reverse")
-                                            div(class="py-1 px-5 text-small rounded-full border-black border border-2 border-dashed text-sm") Configure new Scheme.
+                    <create-endpoint :action="addendpoint"></create-endpoint>
 
-                                div(class="flex flex-col mt-3")
-                                    div(class="mb-1 flex justify-between items-center gap-[2px]") Mode
-                                    div(class="flex gap-[4px]")
-                                        div(class="flex flex-col-reverse")
-                                            input(type="radio", id="auth_mode_required" name="auth_mode" class="peer appearance-none rounded-full border-black ")
-                                            label(for="auth_mode_required" class="peer-checked:text-white peer-checked:bg-black py-1 px-5 text-sm rounded-full border-black border border-2 border-dashed ") Required
-                                        div(class="flex flex-col-reverse")
-                                            input(type="radio", id="auth_mode_optional" name="auth_mode" class="peer appearance-none rounded-full border-black ")
-                                            label(for="auth_mode_optional" class="peer-checked:text-white peer-checked:bg-black py-1 text-sm px-5 rounded-full  border-2 border border-black border-dashed text-black") Optional
-
-                            div(class="flex items-center gap-[4px] mt-3")
-                                input(
-                                    class="border-gray-300 border-2 p-2 rounded mt-1"
-                                    type="checkbox"
-                                    name="cors"
-                                    id="cors"
-                                )
-                                label(for="cors")
-                                    | ENABLE cors on this Endpoints
-
-                            div(class="mt-10 border border-black rounded-lg")
-                                div(class="p-2 flex items-center justify-between w-full" )
-                                    div Endpoint Input
-                                    div +
-
-                                div(class="border-2 rounded flex flex-col p-2")
-                                    div(id="endpoint-input-list" class="grid grid-cols-2 gap-[8px] border border-2 border-dashed border-black p-2")
-                                        <div v-for="item in items">
-                                            //- +endpoint-input("")
-                                            <endpoint-input-component :input=item></endpoint-input-component>
-                                        </div>
-
-                                    div(@click="addinput" class="w-full p-3 ml-auto border-2 border-dashed border-black m-2") add new input
-
-                            div(class="mt-10 border border-black rounded-lg")
-                                div(class="p-2 flex items-center justify-between w-full")
-                                    div Middleware Stack
-                                    div +
-
-                                div(class="border-2 rounded flex flex-col p-2")
-                                    div(class="grid grid-cols-[6fr_4fr] gap-2")
-                                        div(class="flex gap-[4px] p-2 border border-2 border-black border-dashed")
-                                            div(class="flex flex-col-reverse h-max")
-                                                input(type="radio", id="req" name="middleware_stack" class="peer appearance-none rounded-full border-black ")
-                                                label(for="req" class="peer-checked:text-white peer-checked:bg-black py-1 px-5 text-small rounded-full border-black border border-2 border-dashed ") Required
-                                            div(class="flex flex-col-reverse h-max")
-                                                input(type="radio", id="configure_new" name="middleware_stack" class="peer appearance-none rounded-full border-black ")
-                                                label(for="configure_new" class="peer-checked:text-white peer-checked:bg-black py-1 px-5 text-small rounded-full border-black border border-2 border-dashed ") Configure new Scheme.
-
-                                        div(class="flex flex-col p-2 gap-[4px] border border-2 border-black border-dashed")
-                                            div(class="w-full flex items-center justify-between _border-b p-2 py-1 text-sm") 
-                                                div auth middleware.
-                                                div +
-                                            div(class="w-full flex items-center justify-between _border-b p-2 py-1 text-sm") 
-                                                div auth middleware.
-                                                div +
-
-                            div(class="mt-10 border border-black rounded-lg")
-                                div(class="p-2 flex items-center justify-between w-full")
-                                    div Endpoint Logic
-                                    button(type="submit" class="py-3 px-10")
-                                        | click
-
-                                div(class="border-2 rounded p-2")
-                                    div(class="h-[50vh] w-full relative")
-                                        iframe(
-                                            class="h-[100vh] w-full _mt-5"
-                                            src="./index.pug"
-                                        )
-
+                <endpoint-list></endpoint-list>
 
     +endpoint-input("hidden", "endpoint-input")
     +schema-field("hidden", "schema-field")

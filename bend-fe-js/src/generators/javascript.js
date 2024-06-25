@@ -12,9 +12,27 @@ import {Order} from 'blockly/javascript';
 export const forBlock = Object.create(null);
 
 forBlock['add_text'] = function (block, generator) {
-  const text = generator.valueToCode(block, 'TEXT', Order.NONE) || "''";
+  const text =  "''";
+
   const addText = generator.provideFunction_(
     'addText',
+    `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text) {
+      // Add text to the output area.
+      const outputDiv = document.getElementById('output');
+      const textEl = document.createElement('p');
+      textEl.innerText = text;
+      outputDiv.appendChild(textEl);
+    }`,
+  );
+  // Generate the function call for this block.
+  const code = `${addText}(${text});\n`;
+  return code;
+};
+
+forBlock['jhghjmember'] = function (block, generator) {
+  const text =  "''";
+  const addText = generator.provideFunction_(
+    'jhghjmember',
     `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text) {
 
   // Add text to the output area.
@@ -26,5 +44,41 @@ forBlock['add_text'] = function (block, generator) {
   );
   // Generate the function call for this block.
   const code = `${addText}(${text});\n`;
-  return code;
+return [code, Order.NONE];
 };
+
+forBlock['my_procedure_def'] = function(block, generator) {
+  const text = "''";
+  const addText = generator.provideFunction_(
+    'my_procedure_def',
+    `function adfadf(text) {
+
+  // Add text to the output area.
+  const outputDiv = document.getElementById('output');
+  const textEl = document.createElement('p');
+  textEl.innerText = text;
+  outputDiv.appendChild(textEl);
+}`,
+  );
+  // Generate the function call for this block.
+  const code = `${addText}(${text});\n`;
+  return code;
+}
+
+forBlock['my_procedure_call'] = function(block, generator) {
+  const text = "''";
+  const addText = generator.provideFunction_(
+    'my_procedure_call',
+    `function adfadf(text) {
+
+  // Add text to the output area.
+  const outputDiv = document.getElementById('output');
+  const textEl = document.createElement('p');
+  textEl.innerText = text;
+  outputDiv.appendChild(textEl);
+}`,
+  );
+  // Generate the function call for this block.
+  const code = `${addText}(${text});\n`;
+  return code;
+}

@@ -12,7 +12,7 @@ import * as Blockly from 'blockly/core';
 // own custom blocks.
 const addText = {
   type: 'add_text',
-  message0: 'Add text %1',
+  message0: 'why Add text %1',
   args0: [
     {
       type: 'input_value',
@@ -32,4 +32,34 @@ const addText = {
 // This file has no side effects!
 export const blocks = Blockly.common.createBlockDefinitionsFromJsonArray([
   addText,
+  // {
+  //   type: 'some_object',
+  //   message0: '{ %1 }',
+  //   args0: [
+  //   {
+  //     type: 'input_value',
+  //     name: 'TEXT',
+  //     check: 'String',
+  //   },
+  //   ],
+  //   output: null,
+  //   colour: 230,
+  // },
+  {
+    type: 'jhghjmember',
+    message0: 'somethig is this { %1 }',
+    args0: [
+      {
+        type: 'input_value',
+        name: 'TEXT',
+        check: 'String',
+      },
+    ],
+    output: "Number",
+    previousStatement: null,
+    nextStatement: null,
+    colour: 230,
+  tooltip: '',
+  helpUrl: '',
+  },
 ]);
