@@ -1,4 +1,5 @@
 // import { APIToolkit } from "apitoolkit-express";
+import { me } from "./test.mjs"
 
 const apitoolkitClient = {}
 
@@ -11,7 +12,7 @@ const apitoolkitClient = {}
  * 
  */
 function initialise({ app, route }) {
-    return app.use(apitoolkitClient.expressMiddleware)    
+    // return app.use(apitoolkitClient.expressMiddleware)    
 }
 
 /**
@@ -23,12 +24,17 @@ function initialise({ app, route }) {
  * 
  */
 function errorHandler({ app }) {
-    return app.use(apitoolkitClient.errorHandler)
+    // return app.use(apitoolkitClient.errorHandler)
 }
 
-export { initialise, errorHandler }
+export class Clap {
+    constructor(p: string) {
+
+    }
+} 
 
 /**
+ * 
  * initialise
  *
  * @param {number} x - number to be subtracted from
@@ -36,6 +42,19 @@ export { initialise, errorHandler }
  * @return {number} the difference of the numbers
  * 
  */
-export default function (j) {
+export { initialise, errorHandler, me }
+// export { me } from "./"
+
+/**
+ * initialise
+ *
+ * @param {number} j - number to be subtracted from
+ * @param {number} y - number to subtract
+ * @return {number} the difference of the numbers
+ * 
+ */
+function x(j: string, y: string) {
     console.log(j)
 }
+
+export default x;

@@ -239,3 +239,10 @@ hmm its been a while. quite a while. anyway, what's left to do is...
 - make sure that the function body contains only one function block.
 - import all the core plugins and the core middlewares into the UI.
 -  
+
+## 27th june 2024
+i'm thinking of how to extract information from the plugin... my current solution is to use jsdoc to collect function information.
+flow:
+- get all the export declarations in the file.
+- (i'm not sure how re-exports will work... maybe just following the path)
+- if is ExportNamed... 

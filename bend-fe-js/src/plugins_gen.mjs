@@ -1,9 +1,10 @@
 // import { walk } from "./utils";
 import * as acorn from "acorn"
 import * as walk from "acorn-walk"
-import * as parser from "@babel/parser"
+import * as babelparser from "@babel/parser"
 import traverse from "@babel/traverse"
 import * as jsdoc from "comment-parser"
+import typescriptparser from "@typescript-eslint/typescript-estree"
 import fs from "node:fs"
 import fsp from "node:fs/promises"
 
@@ -11,7 +12,7 @@ async function doplugins() {
   const root = "C:/Users/ACER-PC/Documents/work/bend/src/data/plugins"
   const plugins = fs.readdirSync(root)
   // console.log(plugins)
-  const _tree = await Promise.allSettled(plugins.map(e => fsp.readFile(root + "/" + e + "/function.mjs")))
+  const _tree = await Promise.allSettled(plugins.map(e => fsp.readFile(root + "/" + e + "/function.ts")))
   const tree = _tree.map(e => e.value).map(e => e?.toString())
 
   // const plugin_map = new Map();
@@ -19,33 +20,55 @@ async function doplugins() {
   for (let i = 0; i < plugins.length; i++) {
     let leaf = tree[i]
     let origin = plugins[i]
+    let pax;
 
     const myexports = []
     if (leaf) {
-      const parsed = parser.parse(leaf, { sourceType: "module" })
+      const parsed = babelparser.parse(leaf, { sourceType: "module", plugins: ["typescript"] })
+      pax = parsed
+
+      // get all the variables in a map 
+      let map = new Map(
+        parsed.program.body
+          .filter(e => !e.type.includes("Import") && !e.type.includes("Export"))
+          .map(e => {
+            if(e.declarations) {
+              return e.declarations.map(declaration => ({ declaration: declaration, base: e }))
+            } else {
+              return { declaration: e, base: e }
+            }
+          
+          })
+          .flat()
+          .map(({ declaration, base }) => ([declaration.id.name, base]))
+      )
+
       traverse.default(parsed, {
         ExportDefaultDeclaration(node) {
-          // console.log(node.node)
           const comment = commenter(node)
-          myexports.push([node.node, comment])
+          myexports.push(node)
         },
         ExportNamedDeclaration(node) {
-          // console.log(node.node)
+          const specs = node.node.specifiers
           const comment = commenter(node)
-          myexports.push([node.node, comment])
+          myexports.push(node)
         }
       })
     }
 
-    const xxt = myexports.flatMap(e => e[1])
+    // const xxt = myexports.flatMap(e => e[1])
 
 
-    const plugin_tree = myexports
-      .map(e => ([e[0].declaration, e[1]]))
-      .flatMap(e => ([e[0]?.declarations, e[1]]))
+    let plugin_tree = myexports
+      .map(e => (e.specifiers))
+      .flat()
 
-      .map(([e, c]) => {
-        console.log(e,c)
+
+      plugin_tree = plugin_tree
+      .map(e => (e.exported))
+
+      plugin_tree = plugin_tree
+      .map((e) => {
 
         return ({
           name: e?.id.name ?? "default",
