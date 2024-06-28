@@ -27,6 +27,19 @@ function errorHandler({ app }) {
     // return app.use(apitoolkitClient.errorHandler)
 }
 
+
+/**
+ * initialise
+ *
+ * @param {number} x - number to be subtracted from
+ * @param {number} y - number to subtract
+ * @return {number} the difference of the numbers
+ * 
+ */
+export function met() {
+
+}
+
 export class Clap {
     constructor(p: string) {
 
@@ -43,6 +56,7 @@ export class Clap {
  * 
  */
 export { initialise, errorHandler, me }
+
 // export { me } from "./"
 
 /**
@@ -53,7 +67,7 @@ export { initialise, errorHandler, me }
  * @return {number} the difference of the numbers
  * 
  */
-function x(j: string, y: string) {
+export default function x(j: string, y: string) {
     console.log(j)
 }
 

@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
     "start": "webpack serve --open --mode development",
-    "start:dev": "parcel ./src/*.pug"
+    "start:dev": "parcel serve ./src/*.pug"
   },
   "keywords": [
     "blockly"
@@ -31,6 +31,7 @@
   "dependencies": {
     "@babel/preset-typescript": "^7.24.7",
     "@blockly/block-shareable-procedures": "^5.0.2",
+    "@blockly/disable-top-blocks": "^0.5.2",
     "acorn": "^8.12.0",
     "acorn-walk": "^8.3.3",
     "autoprefixer": "^10.4.19",

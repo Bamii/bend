@@ -7,7 +7,7 @@ import CreateFunction from "./vue/create-function.vue"
 import CreateEndpoint from "./vue/create-endpoint.vue"
 import EndpointList from "./vue/endpoint-list.vue"
 import Blockly from "./vue/components/blockly.vue"
-import {loadbend} from "./loadbend"
+import { loadbend } from "./loadbend"
 import { createPinia } from "pinia"
 import initialise from './init'
 
@@ -25,7 +25,31 @@ const iframe_code = ref(null);
 const loader = loadbend();
 const { middlewares, functions, plugins } = loader;
 
-// initialise({ plugins, functions, middlewares })
+document.addEventListener("DOMContentLoaded", function() {
+  const channel = new MessageChannel();
+  const output = document.querySelector(".output");
+  const iframe = document.querySelector("iframe");
+  
+  // Wait for the iframe to load
+  iframe.addEventListener("load", onLoad);
+  
+  function onLoad() {
+    // Listen for messages on port1
+    channel.port1.onmessage = onMessage;
+    // Transfer port2 to the iframe
+    iframe.contentWindow.postMessage(
+      "A message from the index.html page!",
+      "*",
+      [channel.port2]
+    );
+  }
+  
+  function onMessage(e) {
+    console.log(e)
+    console.log(e.data)
+  }
+})
+
 const AUTHENTICATION_SCHEMES = {
   jwt: {
     options: {
@@ -45,7 +69,6 @@ const AUTHENTICATION_SCHEMES = {
   }
 }
 
-// console.log(loader)
 const app = createApp({
   data: () => ({
     AUTHENTICATION_SCHEMES,

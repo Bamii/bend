@@ -245,4 +245,12 @@ i'm thinking of how to extract information from the plugin... my current solutio
 flow:
 - get all the export declarations in the file.
 - (i'm not sure how re-exports will work... maybe just following the path)
-- if is ExportNamed... 
+- follow the trail to the actual function being exported and get the leading comments.
+- if there is no comment, use the argument list to get the arguments... description will be empty string.
+- parse the comment to get the jsdoc definitions.
+
+------------
+currently faced with the problem of deciding how to differentiate middlewares, from regular functions in a plugin, and ive decided to use decorators... i might specify for them to create their own decorators... or import from here... the decorator will be a ..
+scratch that, i'll just require that they put it in the jsdoc comment section
+
+::NOTE:: check for that when parsing the comments

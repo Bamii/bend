@@ -29,11 +29,19 @@ const default_state = () => ({
     middlewares: [],
 })
 const state = ref(default_state());
+const iframe_ref = ref()
 
 const _add_endpoint = () => {
     add_endpoint(state.value)
-    state
+    
     state.value = default_state();
+    console.log(iframe_ref.value)
+    console.log(iframe_ref.value.iframe)
+    console.log(iframe_ref.value.port1)
+
+    iframe_ref.value.port1.postMessage(
+      "A message from the index.html page!",
+    );
 }
 
 const addinput = () => {
@@ -111,6 +119,7 @@ function update(val) {
                         </div>
                     </div>
                 </div>
+
                 <div
                     class="border _border-dashed border-black rounded p-2 mt-10"
                 >
@@ -301,7 +310,7 @@ function update(val) {
                     </div>
                 </div>
 
-                <blockly></blockly>
+                <blockly ref="iframe_ref"></blockly>
             </div>
         </form>
     </div>

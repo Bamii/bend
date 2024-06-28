@@ -8,6 +8,8 @@ import traverse from "@babel/traverse"
 // import fs from "node:fs"
 // import fsp from "node:fs/promises"
 
+import pluginlist from "./data.json"
+
 export function loadbend() {
     const state = {
         functions_meta: {},
@@ -287,49 +289,8 @@ export function loadbend() {
         console.log("dsfadsf")
     }
   `
-    const plugins = JSON.parse(`
-    {
-    "apitoolkit": [
-        { "name": "default", "module": "apitoolkit" },
-        { "name": "default", "module": "apitoolkit" }
-    ],
-    "auth": [
-        { "name": "register", "module": "auth" },
-        { "name": "authenticate", "module": "auth" }
-    ],
-    "bend-toolkit": [
-        { "name": "request", "module": "bend-toolkit" },
-        { "name": "response", "module": "bend-toolkit" }
-    ],
-    "jwt-auth": [{ "name": "register", "module": "jwt-auth" }],
-    "maths": [
-        { "name": "random", "module": "maths" },
-        { "name": "add", "module": "maths" },
-        { "name": "subtract", "module": "maths" },
-        { "name": "multiply", "module": "maths" },
-        { "name": "divide", "module": "maths" },
-        { "name": "default", "module": "maths" }
-    ],
-    "models": [{ "name": "default", "module": "models" }],
-    "object": [
-        { "name": "keys", "module": "object" },
-        { "name": "properties", "module": "object" },
-        { "name": "entries", "module": "object" },
-        { "name": "default", "module": "object" }
-    ],
-    "rbac-auth": [],
-    "server-utils": [],
-    "string": [],
-    "twitter-auth": [{ "name": "register", "module": "twitter-auth" }],
-    "utils": [
-        { "name": "add", "module": "utils" },
-        { "name": "subtract", "module": "utils" },
-        { "name": "multiply", "module": "utils" },
-        { "name": "divide", "module": "utils" },
-        { "name": "default", "module": "utils" }
-    ]
-}
-  `)
+    const plugins = pluginlist
+    // const plugins = JSON.parse(pluginlist)
     const models = JSON.parse(`{}`)
 
     let middlewares = [];
@@ -339,14 +300,12 @@ export function loadbend() {
     traverse(parser.parse(functions_repo, { sourceType: "module" }), {
         FunctionDeclaration(node) {
             functions.push(node)
-        },
+        }
     });
 
-    // console.log(functions)
     functions = functions.map(e => {
         const [_type, module, _] = e.node.id.name.split("__")
         const fn = functions_ast[e.node.id.name]
-        // console.log("fnnn", fn)
 
         let type = null
         switch (_type) {

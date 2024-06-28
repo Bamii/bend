@@ -1,63 +1,71 @@
-/**
- * @license
- * Copyright 2023 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-
 import * as Blockly from 'blockly';
 import { blocks } from './blocks/text';
 import { functions } from './blocks/functions';
 import { forBlock } from './generators/javascript';
-import { javascriptGenerator } from 'blockly/javascript';
+import { javascriptGenerator, Order } from 'blockly/javascript';
 import { save, load } from './serialization';
 import { toolbox } from './toolbox';
 import { loadbend } from './loadbend';
+import { DisableTopBlocks } from '@blockly/disable-top-blocks';
 import { blocks as procedureBlocks, unregisterProcedureBlocks } from '@blockly/block-shareable-procedures';
-// import './index.css?url';
+import { capitalize } from './utils';
 
-// Register the blocks and generator with Blockly
+
 const loader = loadbend()
 
-console.log(loader.plugins)
-const plgns_toolbox = Object.keys(loader.plugins).map(e => (
-  {
+const plgns_toolbox = Object.keys(loader.plugins)
+  .map(e => ({
     kind: "category",
     name: e,
     categoryStyle: e + "_category",
     contents: loader.plugins[e].map(c => {
       forBlock[`${c.name}_${e}`] = function (block, generator) {
-        const text = "''";
+        const text = c.comments?.arguments.map(e => {
+          return generator.valueToCode(block, e.name.toUpperCase(), Order.FUNCTION_CALL)
+        })
 
-        const addText = generator.provideFunction_(
-          'addText',
-          `function ${generator.FUNCTION_NAME_PLACEHOLDER_}(text) {
-            // Add text to the output area.
-            const outputDiv = document.getElementById('output');
-            const textEl = document.createElement('p');
-            textEl.innerText = text;
-            outputDiv.appendChild(textEl);
-          }`,
-        );
         // Generate the function call for this block.
-        const code = `${addText}(${text});\n`;
+        const code = `${e}.${c.name}(${text?.join(",") ?? ""});\n`;
         return code;
       };
 
       return ({
         kind: "block",
-        type: `${c.name}_${e}`
+        type: `${c.name}_${e}`,
       })
     })
-  }
-))
+  }))
 
 const plgns_register = Object.values(loader.plugins).flat()
-  .map((tool) => {
-    // console.log(tool)
+  .map((plugin) => {
+    const opts = plugin.comments?.arguments
+      .map((arg, index) => {
+        let type = arg.type?.toLowerCase();
+        if (type)
+          type = capitalize(type)
+
+        return {
+          [`args${index + 1}`]: [
+            {
+              "type": "input_value",
+              "name": arg.name.toUpperCase(),
+              "check": type
+            }
+          ],
+          [`message${index + 1}`]: `${arg.description} %1`,
+        }
+      }).reduce((acc, curr) => ({ ...acc, ...curr }), {}) ?? {}
+
+    const output = plugin.comments?.return.type
+      ? capitalize(plugin.comments?.return.type)
+      : null;
+
     return {
-      type: tool.name + "_" + tool.module,
-      message0: `${tool.module}.${tool.name}`,
+      type: plugin.name + "_" + plugin.module,
+      message0: `${plugin.name} (${plugin.comments?.description ?? ""})`,
       args0: [],
+      ...opts,
+      output,
       previousStatement: null,
       nextStatement: null,
       colour: 160,
@@ -66,7 +74,6 @@ const plgns_register = Object.values(loader.plugins).flat()
     }
   })
 
-console.log("adfafafasdf", plgns_register)
 unregisterProcedureBlocks();
 Blockly.common.defineBlocks(procedureBlocks);
 Blockly.common.defineBlocks(blocks);
@@ -91,23 +98,39 @@ const ws = Blockly.inject(blocklyDiv, {
 });
 console.log(ws)
 
+
+const type = new URLSearchParams(window.location.search).get("type")
+const block = ws.newBlock('procedures_defnoreturn')
+
+
+if (type == "function") {
+  // set the variables to be empty.
+  // and editable
+} else if (type == "middleware") {
+  // set the varibales to be the shape of the req, res, objects.
+}
+
 // This function resets the code and output divs, shows the
 // generated code from the workspace, and evals the code.
 // In a real application, you probably shouldn't use `eval`.
 const runCode = () => {
-  console.log(ws.getProcedureMap())
+  // console.log(ws.getProcedureMap())
   const code = javascriptGenerator.workspaceToCode(ws);
   // console.log(Blockly.getMainWorkspace().getAllBlocks())
   codeDiv.innerText = code;
 
   // outputDiv.innerHTML = '';
-
   // eval(code);
 };
 
 // Load the initial state from storage and run the code.
 load(ws);
 runCode();
+ws.addChangeListener(Blockly.Events.disableOrphans);
+
+// The plugin must be initialized before it has any effect.
+const disableTopBlocksPlugin = new DisableTopBlocks();
+disableTopBlocksPlugin.init();
 
 // Every time the workspace changes state, save the changes to storage.
 ws.addChangeListener((e) => {
@@ -151,4 +174,23 @@ ws.registerToolboxCategoryCallback('MY_PROCEDURES', function (workspace) {
   return blockList;
 });
 
-functions()
+// const output = document.querySelector(".output");
+window.addEventListener("message", onMessage);
+
+let port;
+function onMessage(e) {
+  if (!e.ports.length) return;
+
+  console.log(e)
+  console.log(e.data)
+  // Use the transferred port to post a message to the main frame
+  
+  port = e.ports[0]
+  e.ports[0].onmessage = function messager(e) {
+    console.log(e)
+    e.ports[0].postMessage(`Message received by IFrame: "${e.data}"`);
+  }
+
+  e.ports[0].postMessage("A message from the iframe in page2.html");
+}
+

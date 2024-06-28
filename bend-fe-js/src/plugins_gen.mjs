@@ -11,8 +11,12 @@ import fsp from "node:fs/promises"
 async function doplugins() {
   const root = "C:/Users/ACER-PC/Documents/work/bend/src/data/plugins"
   const plugins = fs.readdirSync(root)
-  // console.log(plugins)
-  const _tree = await Promise.allSettled(plugins.map(e => fsp.readFile(root + "/" + e + "/function.ts")))
+  const _tree = await Promise.allSettled(plugins.map(async plugin => {
+    return (await Promise.allSettled(
+      ['functions.ts', "functions.mjs", "functions.js", 'function.ts', "function.mjs", "function.js"]
+        .map(e => fsp.readFile(root + "/" + plugin + "/" + e))
+    )).find(e => e.status == "fulfilled").value
+  }))
   const tree = _tree.map(e => e.value).map(e => e?.toString())
 
   // const plugin_map = new Map();
@@ -20,7 +24,7 @@ async function doplugins() {
   for (let i = 0; i < plugins.length; i++) {
     let leaf = tree[i]
     let origin = plugins[i]
-    let pax;
+    let pax, map;
 
     const myexports = []
     if (leaf) {
@@ -28,19 +32,12 @@ async function doplugins() {
       pax = parsed
 
       // get all the variables in a map 
-      let map = new Map(
+      map = new Map(
         parsed.program.body
           .filter(e => !e.type.includes("Import") && !e.type.includes("Export"))
-          .map(e => {
-            if(e.declarations) {
-              return e.declarations.map(declaration => ({ declaration: declaration, base: e }))
-            } else {
-              return { declaration: e, base: e }
-            }
-          
-          })
+          .map(e => !e.id ? e.declarations : e)
           .flat()
-          .map(({ declaration, base }) => ([declaration.id.name, base]))
+          .map(e => ([e.id.name, e]))
       )
 
       traverse.default(parsed, {
@@ -56,50 +53,118 @@ async function doplugins() {
       })
     }
 
-    // const xxt = myexports.flatMap(e => e[1])
+
+    const tee = []
+    for (let node of myexports) {
+      if (node.node.type == "ExportDefaultDeclaration") {
+        const curr_node = node.node.declaration;
+
+        if (curr_node.type == "Identifier") {
+          const xx = map.get(curr_node.name)
+          if (xx) {
+            tee.push({
+              module: origin,
+              name: 'default',
+              arguments: curr_node.node.params.map((e, i) => ({
+                name: 'param' + i,
+                type: e.type,
+                vars: []
+              })),
+              comments: commenter(xx.leadingComments)
+            })
+          }
+        } else if (curr_node.type == "FunctionDeclaration") {
+          tee.push({
+            module: origin,
+            name: 'default',
+            arguments: curr_node.params.map((e, i) => ({
+              name: e.name ?? 'param' + i,
+              type: e.type,
+              vars: []
+            })),
+            comments: commenter(node.node.leadingComments)
+          })
+        }
+      } else if (node.node.type == "ExportNamedDeclaration") {
+        const curr_node = node.node.declaration;
+
+        if (curr_node) {
+          if (curr_node.type == "VariableDeclaration") {
+            for (let spec of curr_node.declarations) {
+              if (spec.init.type.includes("Function")) {
+                tee.push({
+                  module: origin,
+                  name: spec.id.name,
+                  arguments: spec.init.params.map((e, i) => ({
+                    name: e.name ?? 'param' + i,
+                    type: e.type,
+                    vars: []
+                  })),
+                  comments: commenter(node.node.leadingComments)
+                })
+              }
+            }
+          } else if (curr_node.type == "FunctionDeclaration") {
+            tee.push({
+              module: origin,
+              name: curr_node.id.name,
+              arguments: curr_node.params.map((e, i) => ({
+                name: e.name ?? 'param' + i,
+                type: e.type,
+                vars: []
+              })),
+              comments: commenter(node.node.leadingComments)
+            })
+          }
+        } else if (node.node.specifiers) {
+          for (let spec of node.node.specifiers) {
+            const nd = map.get(spec.local.name)
+
+            if (nd) {
+              tee.push({
+                module: origin,
+                name: spec.exported.name,
+                arguments: nd.params.map((e, i) => ({
+                  name: e.name ?? 'param' + i,
+                  type: e.type,
+                  vars: []
+                })),
+                comments: commenter(nd.leadingComments)
+              })
+            }
+          }
+        }
+      }
+    }
 
 
-    let plugin_tree = myexports
-      .map(e => (e.specifiers))
-      .flat()
-
-
-      plugin_tree = plugin_tree
-      .map(e => (e.exported))
-
-      plugin_tree = plugin_tree
-      .map((e) => {
-
-        return ({
-          name: e?.id.name ?? "default",
-          module: origin,
-          arguments: []
-        })
-      })
-
-    // console.log(plugin_tree[0])
-
-    // plugin_map.set(origin, plugin_tree)
-    plugin_map[origin] = plugin_tree
+    plugin_map[origin] = tee
   }
 
   fs.writeFileSync("./data.json", JSON.stringify(plugin_map))
 }
 
-function commenter(node) {
-  const comment = node.node.leadingComments?.find(e => e.type == "CommentBlock")
-
-  if (comment) {
-    const ct = `/*${comment.value.trim()} */`
-    ct.replace("\r", "")
-    console.log(ct)
-    console.log()
-
-    const description = jsdoc.parse(ct)
-    console.log(description)
-    return description
-  } else {
+function commenter(comments) {
+  const comment = comments?.find(e => e.type == "CommentBlock")
+  if (!comment)
     return null
+
+  const ct = `/*${comment.value.trim()}*/`
+  ct.replace("\r", "")
+
+  const [{ description, tags }] = jsdoc.parse(ct)
+
+  const args = tags
+    .filter(e => e.tag == "param" || e.tag == "arg" || e.tag == "argument")
+    .map(({ source: _, problems: __, ...e }) => (e))
+
+  const { source: __, problems: _, ...returns } = tags
+    .find(e => e.tag.includes("return"))
+
+  return {
+    description,
+    return: returns,
+    arguments: args,
   }
 }
 

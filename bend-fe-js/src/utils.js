@@ -111,3 +111,7 @@ export function walk(ast, actions) {
             break;
     }
 }
+
+export function capitalize(string) {
+    return string[0].toUpperCase() + string.toLowerCase().slice(1)
+}
