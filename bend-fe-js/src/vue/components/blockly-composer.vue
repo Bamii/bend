@@ -4,74 +4,48 @@ const props = defineProps({
   class: String
 })
 import { onMounted, ref, nextTick, reactive, watch } from "vue";
-import { useBendStore } from "../../state/bend";
-import { useSharedbStore } from "../../state/sharedb";
-const id = Math.random();
+import { useBlocklyFactory } from "../../state/bend";
+// import { useSharedbStore } from "../../state/sharedb";
+
+const blocklystore = useBlocklyFactory();
 const iframe = ref();
-const channel = new MessageChannel();
-const port1 = channel.port1;
-const data = reactive({ state: null });
 
-const store = useBendStore()
-const { blockly_state, save_blockly_state } = store;
-
-const sharedb = useSharedbStore();
 onMounted(() => {
-    iframe.value?.addEventListener("load", function onLoad() {
-        port1.onmessage = save_state;
-
-        // send in the user's function list.
-        iframe.value.contentWindow.postMessage(
-            "A message from the index.html page!",
-            "*",
-            [channel.port2]
-        );
-    });
+  blocklystore.create_instance(props.name)
+  blocklystore.mount(props.name, iframe)
 });
 
-const save_state = async function (e) {
-    console.log("saving state")
-    console.log(e)
-    console.log()
-    console.log()
-        
-    data.state = e.data;
-    console.log(props.name, e.data)
-    
-    // sav state in store
-    await nextTick();
-};
+const instance = blocklystore.get_instance(props.name)
 
 const post = async (message) => {
-    port1.postMessage({
+    instance?.port1.postMessage({
         type: "update",
         key: message
     })
-    console.log(data.value)
+    console.log(instance?.data.value)
     console.log("----------")
     await nextTick();
-    return data.value;
+    return instance?.data.value;
 };
-
 
 const url = `./index.pug?type=function&name=${props.name}`
 
 const reset = function(data) {
-    port1.postMessage({ type: "reset" })
+    instance?.port1.postMessage({ type: "reset" })
     console.log("DATAAA", data)
 
     if(data) {
-        port1.postMessage({ type: "add_function", data })
+        instance?.port1.postMessage({ type: "add_function", data })
     }
 }
 
 defineExpose({
-    iframe,
-    channel,
-    port1,
+    // iframe,
+    // channel,
+    // port1,
     post,
     reset,
-    state: data
+    state: instance?.data
 });
 </script>
 

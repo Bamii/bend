@@ -1,0 +1,629 @@
+{
+    "apitoolkit": {
+        "origin": "apitoolkit",
+        "variables": [
+            {
+                "module": "apitoolkit",
+                "name": "met",
+                "arguments": [],
+                "comments": {
+                    "description": "initialise",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "difference of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to be subtracted from"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to subtract"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "apitoolkit",
+                "name": "initialise",
+                "arguments": [
+                    { "name": "param0", "type": "ObjectPattern", "vars": [] }
+                ],
+                "comments": {
+                    "description": "initialise",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "difference of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to be subtracted from"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to subtract"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "apitoolkit",
+                "name": "errorHandler",
+                "arguments": [
+                    { "name": "param0", "type": "ObjectPattern", "vars": [] }
+                ],
+                "comments": {
+                    "description": "initialise",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "difference of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to be subtracted from"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to subtract"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "apitoolkit",
+                "name": "default",
+                "arguments": [
+                    { "name": "j", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "initialise",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "difference of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "j",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to be subtracted from"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to subtract"
+                        }
+                    ]
+                }
+            }
+        ],
+        "type": "function"
+    },
+    "auth": {
+        "origin": "auth",
+        "variables": [
+            {
+                "module": "auth",
+                "name": "register",
+                "arguments": [
+                    { "name": "id", "type": "Identifier", "vars": [] }
+                ],
+                "comments": null
+            },
+            {
+                "module": "auth",
+                "name": "authenticate",
+                "arguments": [
+                    { "name": "id", "type": "Identifier", "vars": [] }
+                ],
+                "comments": null
+            }
+        ],
+        "type": "auth"
+    },
+    "bend-toolkit": {
+        "origin": "bend-toolkit",
+        "variables": [
+            {
+                "module": "bend-toolkit",
+                "name": "request",
+                "arguments": [],
+                "comments": null
+            }
+        ],
+        "type": "auth"
+    },
+    "jwt-auth": {
+        "origin": "jwt-auth",
+        "variables": [
+            {
+                "module": "jwt-auth",
+                "name": "register",
+                "arguments": [
+                    { "name": "server", "type": "Identifier", "vars": [] },
+                    { "name": "param1", "type": "ObjectPattern", "vars": [] }
+                ],
+                "comments": null
+            }
+        ],
+        "type": "auth"
+    },
+    "maths": {
+        "origin": "maths",
+        "variables": [
+            {
+                "module": "maths",
+                "name": "random",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "sum",
+                    "return": {
+                        "tag": "return",
+                        "name": "random",
+                        "type": "number",
+                        "optional": false,
+                        "description": "number"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": true,
+                            "description": "- seed"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "maths",
+                "name": "add",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "sum",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "sum of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- first number to add"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- second number to add"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "maths",
+                "name": "subtract",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "subtract",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "difference of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to be subtracted from"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to subtract"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "maths",
+                "name": "multiply",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "multiply",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "product of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- first number"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- multiplier"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "maths",
+                "name": "divide",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "divide",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "division of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- numerator"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- denominator"
+                        }
+                    ]
+                }
+            }
+        ],
+        "type": "function"
+    },
+    "models": { "origin": "models", "variables": [], "type": "function" },
+    "object": {
+        "origin": "object",
+        "variables": [
+            {
+                "module": "object",
+                "name": "keys",
+                "arguments": [
+                    { "name": "object", "type": "Identifier", "vars": [] },
+                    { "name": "cb", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "loop object keys.",
+                    "return": {
+                        "tag": "return",
+                        "name": "",
+                        "type": "void",
+                        "optional": false,
+                        "description": ""
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "-",
+                            "type": "object",
+                            "optional": false,
+                            "description": "object to loop"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "-",
+                            "type": "cb",
+                            "optional": false,
+                            "description": "function to call on each element"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "object",
+                "name": "properties",
+                "arguments": [
+                    { "name": "object", "type": "Identifier", "vars": [] },
+                    { "name": "cb", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "loop object properties.",
+                    "return": {
+                        "tag": "return",
+                        "name": "",
+                        "type": "void",
+                        "optional": false,
+                        "description": ""
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "-",
+                            "type": "object",
+                            "optional": false,
+                            "description": "object to loop"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "-",
+                            "type": "cb",
+                            "optional": false,
+                            "description": "function to call on each element"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "object",
+                "name": "entries",
+                "arguments": [
+                    { "name": "object", "type": "Identifier", "vars": [] },
+                    { "name": "cb", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "loop object entries.",
+                    "return": {
+                        "tag": "return",
+                        "name": "",
+                        "type": "void",
+                        "optional": false,
+                        "description": ""
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "-",
+                            "type": "object",
+                            "optional": false,
+                            "description": "object to loop"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "-",
+                            "type": "cb",
+                            "optional": false,
+                            "description": "function to call on each element"
+                        }
+                    ]
+                }
+            }
+        ],
+        "type": "function"
+    },
+    "rbac-auth": { "origin": "rbac-auth", "variables": [], "type": "auth" },
+    "server-utils": {
+        "origin": "server-utils",
+        "variables": [],
+        "type": "function"
+    },
+    "string": { "origin": "string", "variables": [], "type": "function" },
+    "twitter-auth": {
+        "origin": "twitter-auth",
+        "variables": [
+            {
+                "module": "twitter-auth",
+                "name": "register",
+                "arguments": [
+                    { "name": "server", "type": "Identifier", "vars": [] },
+                    { "name": "param1", "type": "ObjectPattern", "vars": [] }
+                ],
+                "comments": null
+            }
+        ],
+        "type": "auth"
+    },
+    "utils": {
+        "origin": "utils",
+        "variables": [
+            {
+                "module": "utils",
+                "name": "add",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "sum",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "sum of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- first number to add"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- second number to add"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "utils",
+                "name": "subtract",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "subtract",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "difference of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to be subtracted from"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- number to subtract"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "utils",
+                "name": "multiply",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "multiply",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "product of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- first number"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- multiplier"
+                        }
+                    ]
+                }
+            },
+            {
+                "module": "utils",
+                "name": "divide",
+                "arguments": [
+                    { "name": "c", "type": "Identifier", "vars": [] },
+                    { "name": "y", "type": "Identifier", "vars": [] }
+                ],
+                "comments": {
+                    "description": "divide",
+                    "return": {
+                        "tag": "return",
+                        "name": "the",
+                        "type": "number",
+                        "optional": false,
+                        "description": "division of the numbers"
+                    },
+                    "arguments": [
+                        {
+                            "tag": "param",
+                            "name": "x",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- numerator"
+                        },
+                        {
+                            "tag": "param",
+                            "name": "y",
+                            "type": "number",
+                            "optional": false,
+                            "description": "- denominator"
+                        }
+                    ]
+                }
+            }
+        ],
+        "type": "function"
+    }
+}

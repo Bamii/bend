@@ -313,9 +313,23 @@ after quite some research i concluded on (https://share.github.io/sharedb/gettin
 
 ## 7th August 2024
 i finally fixed the sync protocol... i'm currently using sharedb, and it works perfectly out of the box.
-next order is to populate the functions list with user defined funtions. 
+next order is to populate the function toolbox list with user defined funtions. 
 
 types of plugins
 - auth_scheme
 - middleware
 - library
+
+## 14th september 2024
+simple recap of what i've accomplished since the last time i updated this journal.
+- added types to the variable creation (created a plugin)
+- blockly functions toolbox updates when a new function is created
+- coordinate all blockly instances through the store. (todays work)
+
+initially, the instances are all isolated. so that any update to one blocky instance's toolbox will not u pdate the others'.
+I created a manager that allows me t keep track of the blockly instances and broadcast necessary events as needed.
+
+
+next TODOS:
+- add persistent storage to client and server.
+- 

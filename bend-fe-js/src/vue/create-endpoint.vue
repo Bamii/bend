@@ -1,19 +1,20 @@
 <script setup>
+const props = defineProps({ id: String });
 import { ref } from "vue";
-import { AUTHENTICATION_SCHEMES, useBendStore } from "../state/bend.js"
-import { loadbend } from "../loadbend.js"
-const { add_endpoint, middlewares } = useBendStore();
-const BEND = loadbend()
+import { AUTHENTICATION_SCHEMES, useBendStore, useBlocklyFactory } from "../state/bend.js";
+import { loadbend } from "../core/loadbend.js";
+import { useSharedbStore } from "../state/sharedb";
 
-const props = defineProps({
-    action: Function,
-});
+// blockly x bend
+const BEND = loadbend();
+const { modules } = useBendStore();
+const blocklystore = useBlocklyFactory();
 
-const store = ref({
-    middlewares: [],
-});
+// sharedb
+const sharedb = useSharedbStore();
+const { _insert_meta, _insert_data } = sharedb;
+sharedb.setup(sharedb.docc)
 
-console.log("bebnd:", loadbend())
 const default_state = () => ({
     module: "something",
     name: "",
@@ -21,49 +22,51 @@ const default_state = () => ({
     method: "",
     inputs: [],
     cors: false,
-    auth: {
-        mode: "",
-        scheme: "none"
-    },
-    cors: "",
     middlewares: [],
-})
+    authentication: {
+        mode: "",
+        scheme: "none",
+    },
+});
+const iframe_ref = ref();
 const state = ref(default_state());
-const iframe_ref = ref()
 
-const _add_endpoint = () => {
-    add_endpoint(state.value)
-    
+
+const create_endpoint = async () => {
+    if (!state.value.name) return;
+    const instance = blocklystore.get_instance("endpoint")
+
+    let id = `ctrl__${modules[0].name}__${Date.now()}`;
+    let data = { id, ...instance.data.state };
+
+    _insert_meta(["allfunctions", id], { oi: data })
+    _insert_data(["something", "endpoints", 0], { li: { ...state.value, body: { name: id } } })
+
+    // reset state
     state.value = default_state();
-    console.log(iframe_ref.value)
-    console.log(iframe_ref.value.iframe)
-    console.log(iframe_ref.value.port1)
-
-    iframe_ref.value.port1.postMessage(
-      "A message from the index.html page!",
-    );
-}
+    blocklystore.reset_iframe("endpoint");
+};
 
 const addinput = () => {
     state.value.inputs.push({
         type: "",
-        fields: []
-    })
-}
+        fields: [],
+    });
+};
 
 const add_middleware = (mw) => {
     state.value.middlewares.push({
-        name: mw ?? "something"
-    })
-}
+        name: mw ?? "something",
+    });
+};
 
 const edit_auth_scheme = (auth) => {
-    state.value.auth.scheme = auth
-}
+    state.value.auth.scheme = auth;
+};
 
 function update(val) {
-  console.log("updater")
-  state.value.auth.scheme = val
+    console.log("updater");
+    state.value.auth.scheme = val;
 }
 </script>
 
@@ -80,14 +83,25 @@ function update(val) {
         <button popovertarget="endpoint-controller" class="mb-5">
             close modal
         </button>
-        <button @click="_add_endpoint()" class="mb-5">finish stuff</button>
+        <button @click="create_endpoint" class="mb-5">finish stuff</button>
 
         <form
-            @submit="submit_form"
+            @submit="create_endpoint"
             id="endpoint-form"
             class="gap-[6px] grid grid-cols-3"
         >
             <div class="col-span-3 flex flex-col _bg-black">
+                <div class="w-full">
+                    <input
+                        class="border-gray-300 border-2 p-2 pl-0 rounded mt-1 w-full"
+                        id="name"
+                        type="text"
+                        name="name"
+                        autocomplete="name"
+                        v-model="state.name"
+                    />
+                </div>
+
                 <div class="grid grid-cols-[100px_1fr] gap-[4px]">
                     <div class="justify-between flex flex-col mt-3">
                         <select
@@ -133,7 +147,9 @@ function update(val) {
                             <div class="flex flex-col-reverse">
                                 <input
                                     value="none"
-                                    :checked="state.auth.scheme == 'none'"
+                                    :checked="
+                                        state.authentication.scheme == 'none'
+                                    "
                                     type="radio"
                                     id="none_endpoint_auth_scheme"
                                     name="endpoint_auth_scheme"
@@ -149,13 +165,17 @@ function update(val) {
                             </div>
                             <div
                                 id="endpoint-controller-auth-scheme"
-                                v-for="scheme in Object.keys(AUTHENTICATION_SCHEMES)"
+                                v-for="scheme in Object.keys(
+                                    AUTHENTICATION_SCHEMES
+                                )"
                                 class="flex flex-col-reverse"
                                 @click="update(scheme)"
                             >
                                 <input
                                     :value="scheme"
-                                    :checked="state.auth.scheme == scheme"
+                                    :checked="
+                                        state.authentication.scheme == scheme
+                                    "
                                     type="radio"
                                     :id="scheme + '_endpoint_auth_scheme'"
                                     name="endpoint_auth_scheme"
@@ -180,7 +200,7 @@ function update(val) {
 
                     <div
                         class="flex flex-col mt-3"
-                        v-show="state.auth.scheme != 'none'"
+                        v-show="state.authentication.scheme != 'none'"
                     >
                         <div
                             class="mb-1 flex justify-between items-center gap-[2px]"
@@ -190,7 +210,7 @@ function update(val) {
                         <div class="flex gap-[4px]">
                             <div class="flex flex-col-reverse">
                                 <input
-                                    v-model="state.auth.mode"
+                                    v-model="state.authentication.mode"
                                     value="required"
                                     type="radio"
                                     id="auth_mode_required"
@@ -206,7 +226,7 @@ function update(val) {
                             </div>
                             <div class="flex flex-col-reverse">
                                 <input
-                                    v-model="state.auth.mode"
+                                    v-model="state.authentication.mode"
                                     value="optional"
                                     type="radio"
                                     id="auth_mode_optional"
@@ -310,7 +330,7 @@ function update(val) {
                     </div>
                 </div>
 
-                <blockly ref="iframe_ref"></blockly>
+                <blockly name="endpoint" ref="iframe_ref" class="h-[90vh]"></blockly>
             </div>
         </form>
     </div>

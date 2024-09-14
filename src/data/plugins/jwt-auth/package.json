@@ -9,6 +9,7 @@
   "dependencies": {
     "@hapi/jwt": "latest"
   },
+  "bend": "auth",
   "keywords": ["auth"],
   "author": "",
   "license": "ISC"

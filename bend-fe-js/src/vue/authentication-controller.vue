@@ -109,7 +109,7 @@ function update(val) {
                     >sdafkjadklfjlakdf</div>
                 </div>
                 
-                <blockly></blockly>
+                <blockly name="authentication" class="h-[90vh]"></blockly>
             </div>
         </form>
     </div>

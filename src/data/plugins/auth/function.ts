@@ -3,9 +3,7 @@ var passport = require("passport");
 var crypto = require("crypto");
 // const user = Container.get("database").user;
 
-let id;
-export const register = (id) => async (_, next) => {
-  id = id ?? "local";
+export const register = async (id: string = "local") => async (_, next) => {
   passport.use(
     id ?? "local",
     // new LocalStrategy(function verify(username, password, cb) {
@@ -52,4 +50,4 @@ export const register = (id) => async (_, next) => {
   await next()
 };
 
-export const authenticate = (id) => async (context, next) => passport.authenticate(id ?? "local")(context.req, context.res, next);
+export const authenticate = async (id?: string) => async (context, next) => passport.authenticate(id ?? "local")(context.req, context.res, next);

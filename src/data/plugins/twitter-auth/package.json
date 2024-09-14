@@ -9,6 +9,7 @@
   "dependencies": {
     "@hapi/bell": "latest"
   },
+  "bend": "auth",
   "keywords": ["auth"],
   "author": "",
   "license": "ISC"
