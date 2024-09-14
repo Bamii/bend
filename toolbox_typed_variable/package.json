@@ -1,0 +1,62 @@
+{
+  "name": "toolbox_typed_variable",
+  "version": "0.0.0",
+  "description": "A Blockly plugin.",
+  "scripts": {
+    "audit:fix": "blockly-scripts auditFix",
+    "build": "blockly-scripts build",
+    "clean": "blockly-scripts clean",
+    "lint": "blockly-scripts lint",
+    "predeploy": "blockly-scripts predeploy",
+    "start": "blockly-scripts start",
+    "test": "blockly-scripts test"
+  },
+  "main": "./dist/index.js",
+  "module": "./src/index.js",
+  "unpkg": "./dist/index.js",
+  "author": "",
+  "keywords": [
+    "blockly",
+    "blockly-plugin",
+    "toolbox_typed_variable"
+  ],
+  "homepage": "https://github.com/Bamii/bend/tree/master/toolbox_typed_variable#readme",
+  "bugs": {
+    "url": "https://github.com/Bamii/bend/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bamii/bend.git",
+    "directory": "toolbox_typed_variable"
+  },
+  "license": "Apache-2.0",
+  "directories": {
+    "dist": "dist",
+    "src": "src"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@blockly/dev-scripts": "^4.0.4",
+    "@blockly/dev-tools": "^8.0.6",
+    "blockly": "^11.1.1"
+  },
+  "peerDependencies": {
+    "blockly": "^11.1.1"
+  },
+  "publishConfig": {},
+  "eslintConfig": {
+    "extends": "@blockly/eslint-config"
+  },
+  "dependencies": {
+    "@blockly/plugin-modal": "^7.0.7",
+    "@headlessui/vue": "^1.7.22",
+    "@primevue/themes": "^4.0.5",
+    "@unocss/runtime": "^0.62.3",
+    "primevue": "^4.0.5",
+    "unocss": "^0.62.3",
+    "vue": "^3.5.2"
+  }
+}
