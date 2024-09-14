@@ -254,3 +254,68 @@ currently faced with the problem of deciding how to differentiate middlewares, f
 scratch that, i'll just require that they put it in the jsdoc comment section
 
 ::NOTE:: check for that when parsing the comments
+
+## 7th july 2024
+i've been fighting a big fight with blockly for the past ~2 weeks. 
+
+- first, i needed to put the available functions (plugins, and middlewares) into blockly, for people to be able to use in their functions... so i had to parse the plugins exports to know which functions are available (or variables if necessary).
+
+- secondly, blockly and tailwind do not really mix well... some styles break and it doesnt work as expected. my workaround was to use put the blockly instance into a clean page, void of any tailwind shenanigans, and include that page using an iframe. this worked perfectly.
+
+- the next challenge was to figure out how updates to from the iframe will work, i tried using messagechannel, although i had some issues using it initially. 
+here was the flow i used;
+    - click on button to save blockly state.
+    - send message to the iframe (using messagechannel)
+    - iframe responds by sending a message back
+    - update the vue state on iframe message back.
+    - await nextTick() // to catch the new update. note that we're still logically in the button click function
+
+i think good programmmers should be able to see how this algo can run into problems. two words; race conditions.
+
+after a while of head racking, i thought; why not just try something else.
+i then tried;
+    - on blockly update, send a message to the vue component to save the state.
+    - clicking on button simply just fetches the state.
+
+the flow changed from (call - response) to (event based), which tbh was what i should have done from the beginning.
+
+- the next challenge was to figure out how the updates to the data over the wire would work. i was first thinking about updating the function data (to the store) on recurring updates. ()
+i intend on enabling autosave on the editor, and that would translate to quite a number of network calls. it would be quite a lot of data to transmit all the function data over the network, which we don't want. 
+in my train of thought... i extended the thought to the other files, the json files, since right now, i'm saving the files on a storage somewhere... this might be a bottleneck because usually, one doesn't update a portion of a file upload, one usually updates the file in entirity.
+
+here's me second guessing my storage options.
+- mongodb
+- cassandra
+- orientdb
+
+i think i'll go with mongodb. mostly because there's mongo atlas (i don't have to manage the db myself).
+
+back to the network side of things. i don't want to be sending the whole documents on updates, my first instinct was to use CRDTs, with an OpLog.
+so that, i can only send the update operations (i feel like this simplifies things alot)
+we will keep a version of the files on the local browserm and sync the updates as needed.
+
+my current solution matrix is:
+| library | oplog | network sync | 
+| --- | ----------- | --- |
+| yjs | true | true |
+| json-joy | true |  |
+| automerge | true | true |
+
+## 8th july 2024
+automerge can only be used in projects that use webpack, hence i can't use it. json-joy is a collection of libraries that make it easy to build an offline ready app.
+i have to manually push updates over the network to sync, and patch the updates myself...
+
+yjs has everything i need and it but i was getting some error when i tried to include it in the project.
+
+## 10th july 2024
+after quite some research i concluded on (https://share.github.io/sharedb/getting-started)[sharedb] for the following reasons.
+- inbuilt local persistence ()
+
+## 7th August 2024
+i finally fixed the sync protocol... i'm currently using sharedb, and it works perfectly out of the box.
+next order is to populate the functions list with user defined funtions. 
+
+types of plugins
+- auth_scheme
+- middleware
+- library

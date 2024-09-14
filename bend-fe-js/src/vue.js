@@ -1,15 +1,19 @@
-import { createApp, ref } from 'vue/dist/vue.esm-bundler.js'
+import { createApp, defineAsyncComponent, ref } from 'vue/dist/vue.esm-bundler.js'
 // import { ref } from "vue";
-import EndpointInputComponent from "./vue/endpoint-input-component.vue"
+import { createPinia } from "pinia"
 import SchemaField from "./vue/schema-field.vue"
+import EndpointInputComponent from "./vue/endpoint-input-component.vue"
 import AuthenticationController from "./vue/authentication-controller.vue"
 import CreateFunction from "./vue/create-function.vue"
 import CreateEndpoint from "./vue/create-endpoint.vue"
+import CreateModel from "./vue/create-model.vue"
 import EndpointList from "./vue/endpoint-list.vue"
-import Blockly from "./vue/components/blockly.vue"
-import { loadbend } from "./loadbend"
-import { createPinia } from "pinia"
-import initialise from './init'
+import ShareDB from "./vue/components/sharedb.vue"
+// import Blockly from "./vue/components/blockly-component.vue"
+import Blockly from "./vue/components/blockly-composer.vue"
+// import Blockly from "./vue/components/blockly.vue"
+import { loadbend } from "./core/loadbend"
+import { AUTHENTICATION_SCHEMES } from './state/bend'
 
 const pinia = createPinia()
 
@@ -21,53 +25,35 @@ const pinia = createPinia()
 
 // use those files to populate
 // middlewares, functions, 
-const iframe_code = ref(null);
+// const iframe_code = ref(null);
 const loader = loadbend();
 const { middlewares, functions, plugins } = loader;
 
-document.addEventListener("DOMContentLoaded", function() {
-  const channel = new MessageChannel();
-  const output = document.querySelector(".output");
-  const iframe = document.querySelector("iframe");
+// document.addEventListener("DOMContentLoaded", function() {
+//   const channel = new MessageChannel();
+//   const output = document.querySelector(".output");
+//   const iframe = document.querySelector("iframe");
   
-  // Wait for the iframe to load
-  iframe.addEventListener("load", onLoad);
+//   // Wait for the iframe to load
+//   iframe.addEventListener("load", onLoad);
   
-  function onLoad() {
-    // Listen for messages on port1
-    channel.port1.onmessage = onMessage;
-    // Transfer port2 to the iframe
-    iframe.contentWindow.postMessage(
-      "A message from the index.html page!",
-      "*",
-      [channel.port2]
-    );
-  }
+//   function onLoad() {
+//     // Listen for messages on port1
+//     channel.port1.onmessage = onMessage;
+//     // Transfer port2 to the iframe
+//     iframe.contentWindow.postMessage(
+//       "A message from the index.html page!",
+//       "*",
+//       [channel.port2]
+//     );
+//   }
   
-  function onMessage(e) {
-    console.log(e)
-    console.log(e.data)
-  }
-})
+//   function onMessage(e) {
+//     console.log(e)
+//     console.log(e.data)
+//   }
+// })
 
-const AUTHENTICATION_SCHEMES = {
-  jwt: {
-    options: {
-      audience: "",
-      iss: "",
-      name: ""
-    }
-  },
-  google: {
-    clientId: "",
-    clientSecret: "",
-  },
-  twitter: {
-    clientId: "",
-    clientSecret: "",
-    password: ""
-  }
-}
 
 const app = createApp({
   data: () => ({
@@ -135,10 +121,17 @@ const app = createApp({
 
 app.component('EndpointInputComponent', EndpointInputComponent);
 app.component('SchemaField', SchemaField);
+// app.component('AuthenticationController', defineAsyncComponent(() => import('./vue/authentication-controller.vue')));
+// app.component('CreateFunction', defineAsyncComponent(() => import('./vue/create-function.vue')));
+// app.component('CreateEndpoint', defineAsyncComponent(() => import('./vue/create-endpoint.vue')));
 app.component('AuthenticationController', AuthenticationController);
 app.component('CreateFunction', CreateFunction);
+app.component('CreateModel', CreateModel);
 app.component('CreateEndpoint', CreateEndpoint);
+app.component('Sharedb', ShareDB);
 app.component('Blockly', Blockly);
+// app.component('Blockly', defineAsyncComponent(() => import("./vue/components/blockly-component.vue")));
+// app.component('Blockly', defineAsyncComponent(() => import("./vue/components/blockly.vue")));
 app.component('EndpointList', EndpointList);
 
 app.use(pinia)

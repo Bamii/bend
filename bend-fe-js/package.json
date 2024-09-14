@@ -8,7 +8,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production",
     "start": "webpack serve --open --mode development",
-    "start:dev": "parcel serve ./src/*.pug"
+    "start:dev": "parcel serve ./src/*.pug",
+    "clean": "rm -rf .parcel-cache dist",
+    "start:dev2": "npm run tailwind &; npx parcel serve ./src/*.pug",
+    "tailwind": "tailwindcss -i ./src/index.css -o ./src/output.css"
   },
   "keywords": [
     "blockly"
@@ -29,18 +32,38 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@automerge/automerge": "^2.2.4",
+    "@automerge/automerge-repo": "^1.2.0",
+    "@automerge/automerge-repo-network-messagechannel": "^1.2.0",
+    "@automerge/automerge-repo-network-websocket": "^1.2.0",
+    "@automerge/automerge-repo-storage-indexeddb": "^1.2.0",
+    "@automerge/automerge-repo-storage-nodefs": "^1.2.0",
     "@babel/preset-typescript": "^7.24.7",
     "@blockly/block-shareable-procedures": "^5.0.2",
     "@blockly/disable-top-blocks": "^0.5.2",
+    "@blockly/plugin-typed-variable-modal": "^8.0.6",
+    "@teamwork/websocket-json-stream": "^2.0.0",
+    "@unocss/runtime": "^0.62.3",
     "acorn": "^8.12.0",
     "acorn-walk": "^8.3.3",
     "autoprefixer": "^10.4.19",
     "blockly": "^11.0.0",
     "comment-parser": "^1.4.1",
     "esprima": "^4.0.1",
+    "lib0": "^0.2.94",
+    "lodash": "^4.17.21",
+    "node-static": "^0.7.11",
+    "ot-json1": "^1.0.2",
     "pinia": "^2.1.7",
     "postcss": "^8.4.38",
+    "reconnecting-websocket": "^4.4.0",
+    "sharedb": "^5.0.4",
     "tailwindcss": "^3.4.4",
-    "vue": "^3.4.29"
+    "unocss": "^0.62.3",
+    "vue": "^3.4.29",
+    "ws": "^8.18.0",
+    "y-protocols": "^1.0.6",
+    "y-websocket": "^2.0.3",
+    "yjs": "^13.6.18"
   }
 }

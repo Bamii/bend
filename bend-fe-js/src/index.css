@@ -21,7 +21,7 @@ code {
   flex-direction: row;
   width: 100%;
   max-width: 100vw;
-  height: 40vh;
+  height: 100vh;
 }
 
 #blocklyDiv {

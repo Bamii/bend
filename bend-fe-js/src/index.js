@@ -1,196 +1,333 @@
 import * as Blockly from 'blockly';
-import { blocks } from './blocks/text';
-import { functions } from './blocks/functions';
+import { blocks as textBlocks } from './blocks/text';
+// import { functions } from './blocks/functions';
 import { forBlock } from './generators/javascript';
 import { javascriptGenerator, Order } from 'blockly/javascript';
-import { save, load } from './serialization';
-import { toolbox } from './toolbox';
-import { loadbend } from './loadbend';
+import { save, load_state, storageKey, final_result } from './core/serialization';
+import { toolbox } from './utils/toolbox';
+import { loadbend } from './core/loadbend';
 import { DisableTopBlocks } from '@blockly/disable-top-blocks';
 import { blocks as procedureBlocks, unregisterProcedureBlocks } from '@blockly/block-shareable-procedures';
-import { capitalize } from './utils';
+import { capitalize } from './utils/utils';
+import { TypedVariablesToolbox } from '../../toolbox_typed_variable/src';
+// import initUnocssRuntime from '@unocss/runtime'
 
+// initUnocssRuntime({ /* options */ })
 
-const loader = loadbend()
+document.addEventListener("DOMContentLoaded", () => {
+  const search = new URLSearchParams(window.location.search);
+  let name = search.get("name")
+  if (!name) return;
 
-const plgns_toolbox = Object.keys(loader.plugins)
-  .map(e => ({
-    kind: "category",
-    name: e,
-    categoryStyle: e + "_category",
-    contents: loader.plugins[e].map(c => {
-      forBlock[`${c.name}_${e}`] = function (block, generator) {
-        const text = c.comments?.arguments.map(e => {
-          return generator.valueToCode(block, e.name.toUpperCase(), Order.FUNCTION_CALL)
+  let port, ws;
+  const loader = loadbend()
+
+  function reset_state(trdpartyplugins = {}, reset = false) {
+    ws?.dispose();
+
+    const plgns_toolbox = Object.keys(loader.plugins)
+      .map(e => ({
+        kind: "category",
+        name: e,
+        categoryStyle: e + "_category",
+        contents: loader.plugins[e].variables.map(c => {
+          // console.log(`${c.name}_${e}`)
+          forBlock[`custom_${c.name}_${e}`] = function (block, generator) {
+            const text = (c.comments?.arguments ?? c.arguments).map(e => {
+              return generator.valueToCode(block, e.name.toUpperCase(), Order.FUNCTION_CALL)
+            })
+
+            // Generate the function call for this block.
+            const code = `${e}.${c.name}(${text?.join(",") ?? ""});\n`;
+            return code;
+          };
+
+          return ({
+            kind: "block",
+            type: `custom_${c.name}_${e}`,
+          })
         })
+      }))
 
-        // Generate the function call for this block.
-        const code = `${e}.${c.name}(${text?.join(",") ?? ""});\n`;
-        return code;
-      };
+    const plgns_register = Object.values(loader.plugins).map(e => e.variables).flat()
+      .map((plugin) => {
+        const opts = (plugin.comments?.arguments ?? plugin.arguments)
+          .map((arg, index) => {
+            let type = arg.type?.toLowerCase();
+            if (type)
+              type = capitalize(type)
 
-      return ({
-        kind: "block",
-        type: `${c.name}_${e}`,
-      })
-    })
-  }))
+            return {
+              [`args${index + 1}`]: [
+                {
+                  "type": "input_value",
+                  "name": arg.name.toUpperCase(),
+                  "check": type
+                }
+              ],
+              [`message${index + 1}`]: `${arg.description} %1`,
+            }
+          }).reduce((acc, curr) => ({ ...acc, ...curr }), {}) ?? {}
 
-const plgns_register = Object.values(loader.plugins).flat()
-  .map((plugin) => {
-    const opts = plugin.comments?.arguments
-      .map((arg, index) => {
-        let type = arg.type?.toLowerCase();
-        if (type)
-          type = capitalize(type)
+        const output = plugin.comments?.return.type
+          ? capitalize(plugin.comments?.return.type)
+          : null;
 
         return {
-          [`args${index + 1}`]: [
-            {
-              "type": "input_value",
-              "name": arg.name.toUpperCase(),
-              "check": type
-            }
-          ],
-          [`message${index + 1}`]: `${arg.description} %1`,
+          type: "custom_" + plugin.name + "_" + plugin.module,
+          message0: `${plugin.name} (${plugin.comments?.description ?? ""})`,
+          args0: [],
+          ...opts,
+          output,
+          previousStatement: null,
+          nextStatement: null,
+          colour: 160,
+          tooltip: '',
+          helpUrl: '',
         }
-      }).reduce((acc, curr) => ({ ...acc, ...curr }), {}) ?? {}
+      })
 
-    const output = plugin.comments?.return.type
-      ? capitalize(plugin.comments?.return.type)
-      : null;
+    const trdpartyplugins_toolbox = Object.keys(trdpartyplugins)
+      .map(e => ({
+        kind: "category",
+        name: e,
+        categoryStyle: e + "_category",
+        contents: trdpartyplugins[e].variables.map(c => {
+          // console.log(`${c.name}_${e}`)
+          forBlock[`custom_${c.name}_${e}`] = function (block, generator) {
+            const text = (c.comments?.arguments ?? c.arguments).map(e => {
+              return generator.valueToCode(block, e.name.toUpperCase(), Order.FUNCTION_CALL)
+            })
 
-    return {
-      type: plugin.name + "_" + plugin.module,
-      message0: `${plugin.name} (${plugin.comments?.description ?? ""})`,
-      args0: [],
-      ...opts,
-      output,
-      previousStatement: null,
-      nextStatement: null,
-      colour: 160,
-      tooltip: '',
-      helpUrl: '',
+            // Generate the function call for this block.
+            const code = `${e}.${c.name}(${text?.join(",") ?? ""});\n`;
+            return code;
+          };
+
+          return ({
+            kind: "block",
+            type: `custom_${c.name}_${e}`,
+          })
+        })
+      }))
+
+    const trdpartyplugins_register = Object.values(trdpartyplugins).map(e => e.variables).flat()
+      .map((plugin) => {
+        const opts = (plugin.comments?.arguments ?? plugin.arguments)
+          .map((arg, index) => {
+            let type = arg.type?.toLowerCase();
+            if (type)
+              type = capitalize(type)
+
+            return {
+              [`args${index + 1}`]: [
+                {
+                  "type": "input_value",
+                  "name": arg.name.toUpperCase(),
+                  "check": type
+                }
+              ],
+              [`message${index + 1}`]: `${arg.description} %1`,
+            }
+          }).reduce((acc, curr) => ({ ...acc, ...curr }), {}) ?? {}
+
+        const output = plugin.comments?.return.type
+          ? capitalize(plugin.comments?.return.type)
+          : null;
+
+        return {
+          type: "custom_" + plugin.name + "_" + plugin.module,
+          message0: `${plugin.name} (${plugin.comments?.description ?? ""})`,
+          args0: [],
+          ...opts,
+          output,
+          previousStatement: null,
+          nextStatement: null,
+          colour: 160,
+          tooltip: '',
+          helpUrl: '',
+        }
+      })
+
+    unregisterProcedureBlocks();
+    Blockly.common.defineBlocks(textBlocks);
+    Blockly.common.defineBlocks(procedureBlocks);
+    Blockly.common.defineBlocks(Blockly.common.createBlockDefinitionsFromJsonArray(plgns_register));
+    Blockly.common.defineBlocks(Blockly.common.createBlockDefinitionsFromJsonArray(trdpartyplugins_register));
+    Object.assign(javascriptGenerator.forBlock, forBlock);
+
+    ws = Blockly.inject(
+      document.getElementById('blocklyDiv'),
+      {
+        toolbox: {
+          ...toolbox,
+          contents: [
+            ...toolbox.contents,
+            {
+              name: "Plugins",
+              kind: "category",
+              contents: plgns_toolbox
+            },
+            {
+              name: "User functions",
+              kind: "category",
+              contents: trdpartyplugins_toolbox
+            },
+          ]
+        },
+        renderer: 'thrasos',
+        // horizontalLayout: true,
+        // toolboxPosition: "end"
+      }
+    );
+    if (reset) ws?.clear();
+
+    const createFlyout = function (workspace) {
+      let xmlList = [];
+      // Add your button and give it a callback name.
+      const button = document.createElement('button');
+      button.setAttribute('text', 'Create Typed Variable');
+
+      button.setAttribute('callbackKey', 'callbackName');
+
+      xmlList.push(button);
+
+      // This gets all the variables that the user creates and adds them to the
+      // flyout.
+      const blockList = Blockly.VariablesDynamic.flyoutCategoryBlocks(workspace);
+      xmlList = xmlList.concat(blockList);
+      return xmlList;
+    };
+
+    ws.registerToolboxCategoryCallback(
+      'CREATE_TYPED_VARIABLE',
+      createFlyout,
+    );
+
+    const typedVarModal = new TypedVariablesToolbox(ws, 'callbackName', [
+      ['PENGUIN', 'Penguin'],
+      ['GIRAFFE', 'Giraffe'],
+    ]);
+    typedVarModal.init();
+    // Load the initial state from storage and run the code.
+    load_state(ws, name, reset);
+    console.log("blockly-state", JSON.parse(localStorage.getItem("blockly-state")))
+
+    // The plugin must be initialized before it has any effect.
+    const disableTopBlocksPlugin = new DisableTopBlocks();
+    disableTopBlocksPlugin.init();
+
+    // -------------------------------------------
+    // listeners ---------------------------------
+    ws.addChangeListener(Blockly.Events.disableOrphans);
+
+    // Every time the workspace changes state, save the changes to storage.
+    ws.addChangeListener((e) => {
+      if (e.isUiEvent) return;
+
+      let imports = [], function_arguments = [], function_return = null;
+      const blk = ws.getTopBlocks().find(e => e.isEnabled())
+
+      if (blk && blk.isProcedureDef()) {
+        const imports_arr = blk.getDescendants()
+          .map(e => e.type)
+          .filter(e => e.startsWith("custom"))
+          .map(e => e.split("_")[2])
+
+        // debugger
+        imports = [...new Set(imports_arr).values()]
+          .map(e => ({ type: "module", module: e }))
+
+        console.log(blk)
+        function_arguments = blk.getVars();
+        function_return = blk.type == "procedures_defnoreturn"
+          ? null
+          : {
+
+          };
+        console.log(imports)
+      }
+
+      port?.postMessage(
+        save(name, {
+          fn: javascriptGenerator.workspaceToCode(ws), ws,
+          imports, arguments: function_arguments, return: function_return
+        })
+      );
+    });
+  }
+
+  reset_state({
+    custom: {
+      origin: "custom",
+      variables: []
     }
-  })
-
-unregisterProcedureBlocks();
-Blockly.common.defineBlocks(procedureBlocks);
-Blockly.common.defineBlocks(blocks);
-Blockly.common.defineBlocks(Blockly.common.createBlockDefinitionsFromJsonArray(plgns_register));
-Object.assign(javascriptGenerator.forBlock, forBlock);
-
-// Set up UI elements and inject Blockly
-// const outputDiv = document.getElementById('output');
-const codeDiv = document.getElementById('generatedCode').firstChild;
-const blocklyDiv = document.getElementById('blocklyDiv');
-
-
-const ws = Blockly.inject(blocklyDiv, {
-  toolbox: {
-    ...toolbox,
-    contents: [
-      ...toolbox.contents,
-      ...plgns_toolbox
-    ]
-  },
-  renderer: 'thrasos'
-});
-console.log(ws)
-
-
-const type = new URLSearchParams(window.location.search).get("type")
-const block = ws.newBlock('procedures_defnoreturn')
-
-
-if (type == "function") {
-  // set the variables to be empty.
-  // and editable
-} else if (type == "middleware") {
-  // set the varibales to be the shape of the req, res, objects.
-}
-
-// This function resets the code and output divs, shows the
-// generated code from the workspace, and evals the code.
-// In a real application, you probably shouldn't use `eval`.
-const runCode = () => {
-  // console.log(ws.getProcedureMap())
-  const code = javascriptGenerator.workspaceToCode(ws);
-  // console.log(Blockly.getMainWorkspace().getAllBlocks())
-  codeDiv.innerText = code;
-
-  // outputDiv.innerHTML = '';
-  // eval(code);
-};
-
-// Load the initial state from storage and run the code.
-load(ws);
-runCode();
-ws.addChangeListener(Blockly.Events.disableOrphans);
-
-// The plugin must be initialized before it has any effect.
-const disableTopBlocksPlugin = new DisableTopBlocks();
-disableTopBlocksPlugin.init();
-
-// Every time the workspace changes state, save the changes to storage.
-ws.addChangeListener((e) => {
-  // UI events are things like scrolling, zooming, etc.
-  // No need to save after one of these.
-  if (e.isUiEvent) return;
-  save(ws);
-});
-
-// Whenever the workspace changes meaningfully, run the code again.
-ws.addChangeListener((e) => {
-  // Don't run the code when the workspace finishes loading; we're
-  // already running it once when the application starts.
-  // Don't run the code during drags; we might have invalid state.
-  if (
-    e.isUiEvent ||
-    e.type == Blockly.Events.FINISHED_LOADING ||
-    ws.isDragging()
-  ) {
-    return;
-  }
-  runCode();
-});
-
-
-ws.registerToolboxCategoryCallback('MY_PROCEDURES', function (workspace) {
-  const blockList = [];
-  blockList.push({
-    'kind': 'block',
-    'type': 'my_procedure_call',
   });
-  // for (const model of ws.getProcedureMap().getProcedures()) {
-  //   blockList.push({
-  //     'kind': 'block',
-  //     'type': 'my_procedure_call',
-  //     'extraState': {
-  //       'procedureId': model.getId(),
-  //     },
-  //   });
-  // }
-  return blockList;
-});
 
-// const output = document.querySelector(".output");
-window.addEventListener("message", onMessage);
 
-let port;
-function onMessage(e) {
-  if (!e.ports.length) return;
+  // message listeners for the channel.
+  window.addEventListener("message", function onMessage(e) {
+    if (!e.ports.length) return;
 
-  console.log(e)
-  console.log(e.data)
-  // Use the transferred port to post a message to the main frame
-  
-  port = e.ports[0]
-  e.ports[0].onmessage = function messager(e) {
-    console.log(e)
-    e.ports[0].postMessage(`Message received by IFrame: "${e.data}"`);
-  }
+    port = e.ports[0]
 
-  e.ports[0].postMessage("A message from the iframe in page2.html");
-}
+    port.postMessage(
+      JSON.parse(localStorage.getItem(storageKey)?? "{}")[name] ?? final_result
+    )
 
+    port.onmessage = function (e) {
+      switch (e.data.type) {
+        case "reset":
+          // ws.clear();
+          console.log("RESETTING")
+
+          const logg = save("defaulter", {
+            fn: javascriptGenerator.workspaceToCode(ws), ws,
+            imports: [], arguments: [], return: null
+          })
+
+          reset_state({
+            custom: {
+              origin: "custom",
+              variables: [
+                {
+                  "module": "custom",
+                  "name": "function_name",
+                  "arguments": [
+                    { "name": "server", "type": "Identifier", "vars": [] },
+                  ],
+                  "comments": null
+                }
+              ]
+            }
+          }, true)
+          break;
+
+        case "update":
+          load_state(ws, e.data.message)
+          break;
+
+        case "add_function":
+          reset_state({
+            custom: {
+              origin: "custom",
+              variables: [
+                {
+                  "module": "custom",
+                  "name": "function_name",
+                  "arguments": [
+                    { "name": "server", "type": "Identifier", "vars": [] },
+                  ],
+                  "comments": null
+                }
+              ]
+            }
+          })
+          break;
+
+        default:
+          break;
+      }
+    }
+  });
+})
